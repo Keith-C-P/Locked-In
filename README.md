@@ -15,7 +15,7 @@
   
 4) Activate the virtual environment using
     - For Windows:
-  `source .venv\bin\activate.sh`
+  `.venv/Scripts/activate`
     - For Mac/Ubuntu:
   `source .venv/bin/activate`
 
