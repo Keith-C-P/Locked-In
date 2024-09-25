@@ -9,7 +9,8 @@ def main(page: ft.Page) -> None:
     Times = TimeLine()
 
     page.add(
-        Times
+        Times,
+        ft.FloatingActionButton(icon="add", ),
     )
 
 
