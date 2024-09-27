@@ -3,13 +3,19 @@ from task import Task, TaskColumn
 from time_column import TimeColumn
 import datetime as dt
 
-class TimeLine(ft.Card):
+class TimeLine(ft.Container):
     def __init__(self):
         super().__init__()
         self.Time_Column: ft.Container = TimeColumn()
         self.availableTasks: list[str] = []
-        self.margin=ft.margin.all(20)
-        self.padding=ft.padding.all(20)
+        self.width = 1500
+        # self.border = ft.border.all(1) #Debugging
+        self.border_radius = ft.BorderRadius(10, 0, 10, 0)
+        # self.margin=ft.margin.all(100)
+        # self.padding=ft.padding.all(100)
+        # self.bgcolor = "#E7F5C6"
+        # self.width = 1000
+        # self.height = 900
         self.task_input: ft.TextField = ft.TextField(
             hint_text="Add a Task",
             width=300,
@@ -22,21 +28,6 @@ class TimeLine(ft.Card):
 
         self.content = ft.Column(
             [
-                # ft.Row(
-                #     [
-                #         ft.Text(
-                #                 dt.datetime.now().strftime("%A"),
-                #                 size=20,
-                #             ),
-                #         ft.Container(width=570),
-                #         self.task_input,
-                #         ft.IconButton(icon="add",
-                #             alignment=ft.alignment.Alignment(1, 0),
-                #             # on_click=lambda _: self.addTask("Task"),
-                #             )
-                #     ],
-                #     spacing=0,
-                # ),
                 ft.Text(
                     dt.datetime.now().strftime("%A"),
                     size=20,
@@ -62,6 +53,6 @@ class TimeLine(ft.Card):
             scroll=ft.ScrollMode.HIDDEN,
             on_scroll_interval=0,
             width = 1000,
-            height=900,
+            height = 900,
             # expand=True,
         )
