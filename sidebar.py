@@ -17,15 +17,15 @@ class Sidebar(ft.Container):
                     color="#BFD1E5",
                 ),
                 ft.Container(height=20),
-                self.__create_button("Dashboard"),
+                self.__create_button("Dashboard", ft.icons.DASHBOARD),
                 ft.Container(height=10),
-                self.__create_button("Objectives"),
+                self.__create_button("Attendance", ft.icons.CHECK_CIRCLE_OUTLINED),
                 ft.Container(height=10),
-                self.__create_button("Profile"),
+                self.__create_button("Mess Menu", ft.icons.FASTFOOD),
                 ft.Container(height=10),
-                self.__create_button("Progress"),
-                ft.Container(height=10),
-                self.__create_button("Settings"),
+                # self.__create_button("Progress"),
+                # ft.Container(height=10),
+                self.__create_button("Settings", ft.icons.SETTINGS),
             ],
             alignment="start",
         )
@@ -35,9 +35,10 @@ class Sidebar(ft.Container):
         self.padding = 20
         self.border_radius = ft.BorderRadius(40, 0, 40, 0)
 
-    def __create_button(self, text: str) -> ft.TextButton:
+    def __create_button(self, text: str, icon: ft.icons) -> ft.TextButton:
         # Button creation with hover effects
         return ft.TextButton(
+            icon= icon,
             text=text,
             style=ft.ButtonStyle(
                 color="#E7F5C6",  # Default text color for button

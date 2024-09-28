@@ -5,7 +5,7 @@ class Navbar(ft.Column):
         super().__init__()
         self.width = 412.3
         self.height = 40
-        self.bgcolor = "#F5F3FF"
+        # self.bgcolor = "#E7F5C6"
         self.padding = 20
         self.border_radius = ft.BorderRadius(23, 23, 23, 23)
 
@@ -14,7 +14,7 @@ class Navbar(ft.Column):
             width=300,  # Adjust width if necessary
             height=40,
             border_radius=23,
-            bgcolor="#F5F3FF",  # Background color of the input field
+            # bgcolor="#E7F5C6",  # Background color of the input field
             color="#288173",  # Input text color
             cursor_color="#288173",  # Color of the text cursor
             focused_border_color=ft.colors.TRANSPARENT,  # No border color when focused
@@ -34,7 +34,7 @@ class Navbar(ft.Column):
             width=412.3,
             height=40,
             border_radius=23,
-            bgcolor="#F5F3FF",  # Background color of the search bar
+            bgcolor="#E7F5C6",  # Background color of the search bar
             padding=10,
         )
 
