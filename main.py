@@ -34,7 +34,6 @@ def main(page: ft.Page) -> None:
             ),
             alignment=ft.alignment.center_left
         ),
-        # Search,
         ft.Container(
             content=ft.Row(
                 controls= [
