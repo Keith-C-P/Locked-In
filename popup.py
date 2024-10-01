@@ -46,3 +46,7 @@ def main(page: ft.Page):
 
 if __name__ == "__main__":
     ft.app(target=main)
+
+#TODO
+# - Add fields for task name, start time, end time, (description)
+# - Add button for creating task (ie submit/confirm)
