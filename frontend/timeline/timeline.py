@@ -1,6 +1,6 @@
 import flet as ft
-from timeline.task_layer import Task_Layer
-from timeline.time_layer import Time_Layer
+from frontend.timeline.task_layer import Task_Layer
+from frontend.timeline.time_layer import Time_Layer
 
 class TimeLine(ft.Container):
     def __init__(self, min_height: int = 50, time_division: int = 15, header_height: int = 50,  height: int = 900, width: int = None):

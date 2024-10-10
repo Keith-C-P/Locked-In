@@ -1,7 +1,9 @@
 import mysql.connector
 import os
+from dataclasses import dataclass
 from dotenv import load_dotenv
 
+@dataclass
 class Task():
     name: str = "Default Task"
     start_time: str = ""
@@ -32,14 +34,14 @@ class Database:
             self.conn.commit()
 
             # Create Users Table
-            self.cursor.execute(f"CREATE TABLE IF NOT EXISTS USERS (
+            self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS USERS (
                                 UUID        INT          AUTO_INCREMENT PRIMARY KEY,
                                 PRIVILAGE   VARCHAR(255),
                                 USERNAME    VARCHAR(255),
-                                PASSWORD    VARCHAR(255));")
+                                PASSWORD    VARCHAR(255));""")
 
             # Create Tasks Table
-            self.cursor.execute(f"CREATE TABLE IF NOT EXISTS TASKS (
+            self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS TASKS (
                                 TASKID        INT AUTO_INCREMENT PRIMARY KEY,
                                 FOREIGN KEY(AUTHOR) REFERENCES USERS(UUID),
                                 EVENT_NAME    VARCHAR(255)        NULL,
@@ -47,7 +49,7 @@ class Database:
                                 END_TIME      VARCHAR(255)        NULL,
                                 DESCRIPTION   TEXT                NULL,
                                 DATE          DATE                NULL,
-                                REPITION      VARCHAR(255)        NULL);") #Mon Tue Wed Thu Fri Sat Sun
+                                REPITION      VARCHAR(255)        NULL);""") #Mon Tue Wed Thu Fri Sat Sun
             self.conn.commit()
         else:
             self.cursor.execute(f"USE {self.APP_NAME};")
@@ -63,7 +65,8 @@ class Database:
 
     def add_task(self, task: Task):
         self.cursor.execute(f"USE {self.APP_NAME};")
-        self.cursor.execute(f"INSERT INTO TASKS (AUTHOR,
+        self.cursor.execute(f"""INSERT INTO TASKS (
+                            AUTHOR,
                             EVENT_NAME,
                             START_TIME,
                             END_TIME,
@@ -78,7 +81,7 @@ class Database:
                             '{task.description}',
                             '{task.day}',
                             '{task.share_with}',
-                            '{task.repition}');")
+                            '{task.repition}');""")
         self.conn.commit()
 
     def check_task(self, task: Task):
@@ -96,8 +99,6 @@ class Database:
 
     def login():
         pass
-
-
 
 # USERS DATABASE
 # SL.NO. | PRIVILAGE | USERNAME | PASSWORD
