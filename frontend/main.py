@@ -1,5 +1,5 @@
 import flet as ft
-from timeline import TimeLine
+from timeline.timeline import TimeLine
 from sidebar import Sidebar
 from navbar import Navbar
 

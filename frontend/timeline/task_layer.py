@@ -1,13 +1,19 @@
 import flet as ft
 import dataclasses
 import random
+from backend.database_connector import Database, Task
 
 @dataclasses.dataclass
 class Task():
     name: str = "Default Task"
     start_time: str = ""
     end_time: str = ""
+    day: str = ""
+    description: str = ""
+    repition: str = ""
+    author: int = 0
     color: str = None
+
 
 class TaskCard(ft.Container):
     def __init__(self, task: Task, height: int):
