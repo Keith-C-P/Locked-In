@@ -57,7 +57,7 @@ def create_login_page(page: ft.Page):
     # "Login to your Account" text
     login_text = ft.Text(
         value="Login to your Account",
-        size=30,
+        size=40,
         color="#ffffff",  # White text color
         weight=ft.FontWeight.BOLD
     )
