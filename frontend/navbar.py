@@ -15,7 +15,7 @@ class Navbar(ft.Column):
             height=40,
             border_radius=23,
             # bgcolor="#E7F5C6",  # Background color of the input field
-            color="#288173",  # Input text color
+            color="#000000FF",  # Input text color
             cursor_color="#288173",  # Color of the text cursor
             focused_border_color=ft.colors.TRANSPARENT,  # No border color when focused
             border_color=ft.colors.TRANSPARENT,  # No border color by default
