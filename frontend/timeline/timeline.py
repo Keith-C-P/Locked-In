@@ -1,14 +1,27 @@
 import flet as ft
 from frontend.timeline.task_layer import Task_Layer
 from frontend.timeline.time_layer import Time_Layer
+from backend.database_connector import User
 
 class TimeLine(ft.Container):
-    def __init__(self, min_height: int = 50, time_division: int = 15, header_height: int = 50,  height: int = 900, width: int = None):
+    def __init__(self,
+        min_height: int = 50,
+        time_division: int = 15,
+        header_height: int = 50,
+        height: int = 900,
+        width: int = None,
+        user: User = User(
+            uuid=1,
+            username="John Doe",
+            privilage="ADMIN",
+            password="password"
+        )
+    ):
         # Initialization
         super().__init__()
         self.time_division = time_division
         self.min_height = min_height
-        self.task_layer = Task_Layer()
+        self.task_layer = Task_Layer(user=user)
         self.header_height = header_height
 
         # Styling
@@ -28,7 +41,7 @@ class TimeLine(ft.Container):
                 ft.Stack(
                     controls=[
                         Time_Layer(min_height=self.min_height, time_division=self.time_division),
-                        Task_Layer(min_height=self.min_height, time_division=self.time_division, header_height=self.header_height, padding=10),
+                        Task_Layer(min_height=self.min_height, time_division=self.time_division, header_height=self.header_height, padding=10, user=user),
                     ],
                     clip_behavior=None,
                 ),

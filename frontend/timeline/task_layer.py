@@ -1,6 +1,6 @@
 import flet as ft
 import random
-from backend.database_connector import Database, Task
+from backend.database_connector import Database, Task, User
 
 class TaskCard(ft.Container):
     def __init__(self, task: Task, height: int):
@@ -40,9 +40,10 @@ class TaskCard(ft.Container):
         )
 
 class Task_Layer(ft.Container):
-    def __init__(self, time_division: int = 15, header_height: int = 50, min_height: int = 900, width: int = None, padding: int = 10):
+    def __init__(self, user: User, time_division: int = 15, header_height: int = 50, min_height: int = 900, width: int = None, padding: int = 10):
         # Initialization
         super().__init__()
+        self.conn = Database()
         self.task_list: list[Task] = []
         self.task_cards: list[TaskCard] = []
         self.border_radius=ft.border_radius.all(10)
@@ -50,18 +51,6 @@ class Task_Layer(ft.Container):
         self.total_height = (((24 * 60) // time_division) * min_height) + self.header_height
         # print(f"Total Height: {self.total_height}")
         self.time_division = time_division
-        self.colors = (
-            ft.colors.RED_500,
-            ft.colors.BLUE_500,
-            ft.colors.GREEN_500,
-            ft.colors.YELLOW_500,
-            ft.colors.PURPLE_500,
-            ft.colors.PINK_500
-        )
-
-        self.add_task(Task(name="Task 1", start_time="01:15", end_time="02:00"))
-        self.add_task(Task(name="Task 2", start_time="02:00", end_time="05:00"))
-        self.add_task(Task(name="Task 4", start_time="05:15", end_time="05:16"))
 
         # Styling
         self.height = self.total_height
@@ -72,6 +61,9 @@ class Task_Layer(ft.Container):
         self.expand=True
         # self.border=ft.border.all(1, "red") # Debugging
         self.padding = ft.padding.all(padding)
+
+        self.task_list = self.conn.get_tasks(user.uuid)
+        self.__task_builder(self.task_list)
 
         # Content
         self.content = ft.Row(
@@ -120,11 +112,11 @@ class Task_Layer(ft.Container):
         end_index = int(end_time[0]) * 60 + int(end_time[1])
         return end_index - start_index
 
-    def __task_builder(self) -> None:
+    def __task_builder(self, task_list: tuple[Task]) -> None:
         """
         Build the task cards
         """
-        if len(self.task_list) == 0:
+        if len(task_list) == 0:
             return
 
         height_of_minute = (self.total_height - self.header_height) / (24 * 60)
@@ -146,9 +138,9 @@ class Task_Layer(ft.Container):
             filler_height = start_time * height_of_minute
             self.task_cards.append(filler_container(height=filler_height))
 
-        for i in range(len(self.task_list)):
-            current_task = self.task_list[i]
-            task_length = self.__task_length(current_task)
+        for i in range(len(task_list)):
+            current_task = task_list[i]
+            task_length = current_task.length
 
             # print(f"Rendering Task: {current_task.name}, Height: {task_length * height_of_minute}")
 

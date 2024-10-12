@@ -4,7 +4,7 @@ from frontend.sidebar import Sidebar
 from frontend.navbar import Navbar
 
 def main(page: ft.Page) -> None:
-    page.title = "APP Project"
+    page.title = "Locked-In"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.theme_mode = 'dark'
