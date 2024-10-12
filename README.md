@@ -21,7 +21,7 @@
 
 5) Run this to install `Flet` into your venv
     - For Windows or Mac/Ubuntu:
-  `pip install flet`
+  `pip install flet mysql-connector-python`
 
 6) Clone the repo into the current working directory
 
