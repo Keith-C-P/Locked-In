@@ -25,7 +25,15 @@
 
 6) Clone the repo into the current working directory
 
-7) Run this to start the app
+7) In the `└─backend` directory make a file named `.env` with this inside
+```
+MYSQL_HOSTNAME="localhost"
+MYSQL_USERNAME="your-username"
+MYSQL_PASSWORD="your-password"
+```
+**Replace your username and password with the MySQL username and password**
+
+8) Run this to start the app
     - For Windows or Mac/Ubuntu:
   `flet run main.py`
 
