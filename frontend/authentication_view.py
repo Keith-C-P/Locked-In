@@ -2,13 +2,14 @@ import flet as ft
 
 def create_login_page(page: ft.Page):
     page.title = "Login"
-    page.window_width = 800  # Set the width of the window
-    page.window_height = 1000  # Set the height of the window
+    # page.window_width = 800  # Set the width of the window
+    # page.window_height = 1000  # Set the height of the window
+    page.theme_mode = "dark"  # Use the light theme
 
     # Left strip with solid color, adjusted width to match your dashboard's left strip
     left_strip = ft.Container(
         width=279,  # Width matching your dashboard
-        height=page.window_height,  # Set height to cover the entire window
+        # height=page.window_height,  # Set height to cover the entire window
         bgcolor="#b3ff00",  # Use the specified color for the left strip
         content=ft.Column(  # Centering the text vertically in the strip
             [

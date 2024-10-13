@@ -1,49 +1,26 @@
 import flet as ft
-from frontend.timeline.timeline import TimeLine
-from frontend.sidebar import Sidebar
-from frontend.navbar import Navbar
+from frontend.views import view_handler
 
 def main(page: ft.Page) -> None:
     page.title = "Locked-In"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.theme_mode = 'dark'
-    Times = TimeLine()
-    Side = Sidebar()
-    Search = Navbar()
-    # page.bgcolor = "#E7F5C6"
 
-    page.add(
-        ft.Container(
-            content = ft.Row(
-                controls=[
-                    ft.Column(
-                    controls= [
-                        ft.Text("Dashboard", size=35, color="#E7F5C6"),
-                        ft.Text("Todays Progress", size=15, color="#E7F5C6"),
-                    ],
-                    alignment=ft.MainAxisAlignment.START,
-                    ),
-                    ft.Container(width=500),
-                    Search,
-                    ft.Container(width=500),
-                    ft.IconButton(ft.icons.PERSON, bgcolor="#E7F5C6", icon_color="#288173"),
-                    ft.Text("John Doe", size=20, color="#E7F5C6"),
-                    ft.IconButton(ft.icons.ARROW_DROP_DOWN, icon_color="#288173"),
-                ]
-            ),
-            alignment=ft.alignment.center_left
-        ),
-        ft.Container(
-            content=ft.Row(
-                controls= [
-                    Side,
-                    Times,
-                ]
-            ),
-        ),
-        ft.FloatingActionButton(icon="add", ),
-    )
+    def route_change(route: ft.RouteChangeEvent) -> None:
+        print(f"Current Route: {page.route}")
+        page.views.clear()
+
+        view = view_handler(page).get(page.route, ft.View(controls=[ft.Text("404 Not Found")]))
+
+        page.views.append(
+            view
+        )
+        page.update()
+
+    page.on_route_change = route_change
+    page.go('/')
+    # page.update()
 
 
 if __name__ == "__main__":
