@@ -4,11 +4,12 @@ import flet as ft
 from frontend.timeline.timeline import TimeLine
 from frontend.sidebar_component import Sidebar
 from frontend.navbar_component import Navbar
+from backend.database_connector import Database, Task, User
 
 class Dashboard(ft.Container):
-    def __init__(self):
+    def __init__(self, page: ft.Page , database: Database):
         super().__init__()
-        self.Times = TimeLine()
+        self.Times = TimeLine(database=database)
         self.Side = Sidebar()
         self.Search = Navbar()
 

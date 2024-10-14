@@ -40,10 +40,19 @@ class TaskCard(ft.Container):
         )
 
 class Task_Layer(ft.Container):
-    def __init__(self, user: User, time_division: int = 15, header_height: int = 50, min_height: int = 900, width: int = None, padding: int = 10):
+    def __init__(
+        self,
+        database: Database,
+        time_division: int = 15,
+        header_height: int = 50,
+        min_height: int = 900,
+        width: int = None,
+        padding: int = 10
+    ):
+
         # Initialization
         super().__init__()
-        self.conn = Database()
+        self.conn = database
         self.task_list: list[Task] = []
         self.task_cards: list[TaskCard] = []
         self.border_radius=ft.border_radius.all(10)
@@ -62,8 +71,9 @@ class Task_Layer(ft.Container):
         # self.border=ft.border.all(1, "red") # Debugging
         self.padding = ft.padding.all(padding)
 
-        self.task_list = self.conn.get_tasks(user.uuid)
-        self.__task_builder(self.task_list)
+        if self.conn.logged_in_user is not None:
+            self.task_list = self.conn.get_tasks(self.conn.logged_in_user.uuid)
+            self.__task_builder(self.task_list)
 
         # Content
         self.content = ft.Row(

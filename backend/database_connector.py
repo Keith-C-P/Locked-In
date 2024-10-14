@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 
 @dataclass
 class User():
+    username: str
+    password: str
     uuid: int = 0
     privilage: str = "USER"
-    username: str = ""
-    password: str = ""
 
     def __post_init__(self):
         assert self.privilage in ("ADMIN", "USER"), "Privilage must be either ADMIN or USER"
@@ -32,7 +32,7 @@ class Task():
     length: int = 0
     color: str = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         assert self.date or self.repition, "Date or repitition must be provided"
         assert not (self.date and self.repition), "Date and repitition is not allowed"
         assert 4 <= len(self.name), "Task name must be atleast 4 characters long"
@@ -63,13 +63,14 @@ class Task():
 
 
 class Database:
-    def __init__(self, app_name: str = "LOCKEDIN"):
+    def __init__(self, app_name: str = "LOCKEDIN") -> None:
         self.APP_NAME = app_name
         load_dotenv()
         self.HOSTNAME = os.getenv("MYSQL_HOSTNAME")
         self.USERNAME = os.getenv("MYSQL_USERNAME")
         self.PASSWORD = os.getenv("MYSQL_PASSWORD")
         self.__connect()
+        self.logged_in_user: User | None = None
 
     def __connect(self):
         self.conn = mysql.connector.connect(
@@ -84,7 +85,7 @@ class Database:
             self.__create_database()
             pass
 
-    def __create_database(self):
+    def __create_database(self) -> None:
         # self.cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.APP_NAME};")
         self.cursor.execute(f"SHOW DATABASES LIKE '{self.APP_NAME}';")
 
@@ -114,12 +115,16 @@ class Database:
                             SOURCE        VARCHAR(255)        NULL);""") #Mon Tue Wed Thu Fri Sat Sun
         self.conn.commit()
 
-    def add_user(self, user: User):
+    def add_user(self, user: User) -> bool:
         self.cursor.execute(f"USE {self.APP_NAME};")
+        if self.user_exists(user):
+            print("User Already Exists")
+            return False
         self.cursor.execute(f"INSERT INTO USERS (PRIVILAGE, USERNAME, PASSWORD) VALUES ('{user.privilage}', '{user.username}', '{user.password}');")
         self.conn.commit()
+        return True
 
-    def add_task(self, task: Task):
+    def add_task(self, task: Task) -> None:
         self.cursor.execute(f"USE {self.APP_NAME};")
         self.cursor.execute(f"""INSERT INTO TASKS (
                             AUTHOR,
@@ -157,8 +162,24 @@ class Database:
             tasks.append(task)
         return tuple(tasks)
 
-    def login():
-        pass
+    def login(self, username, password) -> User | str:
+        self.cursor.execute(f"USE {self.APP_NAME};")
+        if not self.user_exists(User(username=username, password=password)):
+            return "User Does Not Exist"
+
+        self.cursor.execute(f"SELECT * FROM USERS WHERE USERNAME = '{username}' AND PASSWORD = '{password}';")
+        user = self.cursor.fetchall()[0]
+        if user:
+            print(user)
+            self.logged_in_user = User(uuid=user[0], privilage=user[1], username=user[2], password=user[3])
+            return None
+        return "Incorrect Password"
+
+    def user_exists(self, user: User) -> bool:
+        self.cursor.execute(f"SELECT * FROM USERS WHERE USERNAME = '{user.username}';")
+        if self.cursor.fetchall():
+            return True
+        return False
 
 
 if __name__ == "__main__":
