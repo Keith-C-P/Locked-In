@@ -11,17 +11,15 @@ def main(page: ft.Page) -> None:
         print(f"Current Route: {page.route}")
         page.views.clear()
 
+        # Get the view based on the current route
         view = view_handler(page).get(page.route, ft.View(controls=[ft.Text("404 Not Found")]))
 
-        page.views.append(
-            view
-        )
+        # Append the view to the page's views
+        page.views.append(view)
         page.update()
 
     page.on_route_change = route_change
-    page.go('/')
-    # page.update()
-
+    page.go('/')  # Navigate to the home page
 
 if __name__ == "__main__":
     ft.app(target=main)
