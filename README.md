@@ -1,6 +1,7 @@
 # APP_Project
 
-## How to use :
+## How to use
+
 1) Make a new folder in your system
     - For Windows or Mac/Ubuntu use:
   `mkdir FolderName`
@@ -26,11 +27,13 @@
 6) Clone the repo into the current working directory
 
 7) In the `└─backend` directory make a file named `.env` with this inside
-```
+
+```python
 MYSQL_HOSTNAME="localhost"
 MYSQL_USERNAME="your-username"
 MYSQL_PASSWORD="your-password"
 ```
+
 **Replace your username and password with the MySQL username and password**
 
 8) Run this to start the app
@@ -38,4 +41,13 @@ MYSQL_PASSWORD="your-password"
   `flet run main.py`
 
 > Run this to deactivate the virtual environment
->    - For Windows or Mac/Ubuntu: `deactivate`
+>
+> - For Windows or Mac/Ubuntu: `deactivate`
+
+How to check for data in MySQL:
+
+cd into Program Files/MySQL/MySQL Server X.X/bin
+run mysql -u root -p in the terminal and input your password
+run USE lockedin;
+run SHOW TABLES;
+run SELECT * FROM (table_name);
