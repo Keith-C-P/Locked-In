@@ -14,7 +14,7 @@ class TimeLine(ft.Container):
         user: User = User(
             uuid=1,
             username="John Doe",
-            privilage="ADMIN",
+            privilege="ADMIN",
             password="password"
         )
     ):
