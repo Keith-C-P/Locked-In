@@ -10,15 +10,13 @@ from dotenv import load_dotenv
 @dataclass
 
 class User():
-
+    username: str
+    password: str
     uuid: int = 0
 
     privilage: str = "USER"
-
     username: str = ""
-
     password: str = ""
-
 
     def __post_init__(self):
 
@@ -62,13 +60,9 @@ class Task():
 
 
     def __post_init__(self):
-
-        assert self.date or self.repetition, "Date or repetition must be provided"
-
-        assert not (self.date and self.repetition), "Date and repetition is not allowed"
-
-        assert 3 <= len(self.name), "Task name must be atleast 3 characters long"
-
+        assert self.date or self.repition, "Date or repitition must be provided"
+        assert not (self.date and self.repition), "Date and repitition is not allowed"
+        assert 4 <= len(self.name), "Task name must be atleast 4 characters long"
 
         self.length = self.__task_length()
 
@@ -115,9 +109,7 @@ class Task():
 
 
 class Database:
-
     def __init__(self, app_name: str = "LOCKEDIN"):
-
         self.APP_NAME = app_name
 
         load_dotenv()
@@ -128,6 +120,7 @@ class Database:
 
         self.PASSWORD = os.getenv("MYSQL_PASSWORD")
         self.__connect()
+        self.logged_in_user: User | None = None
 
 
     def __connect(self):
@@ -153,9 +146,7 @@ class Database:
 
             pass
 
-
     def __create_database(self):
-
         # self.cursor.execute(f"CREATE DATABASE IF NOT EXISTS {self.APP_NAME};")
 
         self.cursor.execute(f"SHOW DATABASES LIKE '{self.APP_NAME}';")
@@ -209,18 +200,14 @@ class Database:
 
         self.conn.commit()
 
-
     def add_user(self, user: User):
-
         self.cursor.execute(f"USE {self.APP_NAME};")
-
         self.cursor.execute(f"INSERT INTO USERS (PRIVILAGE, USERNAME, PASSWORD) VALUES ('{user.privilage}', '{user.username}', '{user.password}');")
 
         self.conn.commit()
-
+        return True
 
     def add_task(self, task: Task):
-
         self.cursor.execute(f"USE {self.APP_NAME};")
 
         self.cursor.execute(f"""INSERT INTO TASKS (
@@ -291,9 +278,7 @@ class Database:
 
         return tuple(tasks)
 
-
     def login():
-
         pass
 
 

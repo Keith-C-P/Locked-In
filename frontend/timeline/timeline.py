@@ -5,6 +5,7 @@ from backend.database_connector import User
 
 class TimeLine(ft.Container):
     def __init__(self,
+        database=None,
         min_height: int = 50,
         time_division: int = 15,
         header_height: int = 50,
@@ -21,7 +22,7 @@ class TimeLine(ft.Container):
         super().__init__()
         self.time_division = time_division
         self.min_height = min_height
-        self.task_layer = Task_Layer(user=user)
+        self.task_layer = Task_Layer(database=database)
         self.header_height = header_height
 
         # Styling
@@ -41,7 +42,7 @@ class TimeLine(ft.Container):
                 ft.Stack(
                     controls=[
                         Time_Layer(min_height=self.min_height, time_division=self.time_division),
-                        Task_Layer(min_height=self.min_height, time_division=self.time_division, header_height=self.header_height, padding=10, user=user),
+                        Task_Layer(min_height=self.min_height, time_division=self.time_division, header_height=self.header_height, padding=10, database=database),
                     ],
                     clip_behavior=None,
                 ),
