@@ -14,6 +14,7 @@ class User():
         assert self.privilege in ("ADMIN", "USER"), "Privilage must be either ADMIN or USER"
         assert 4 <= len(self.username) <= 255, "Username must be between 4 and 255 characters"
         assert 8 <= len(self.password) <= 255, "Password must be between 8 and 255 characters"
+        assert self.username.isalnum(), "Username can only contain letters and numbers"
 
     def __str__(self):
         return f"User: {self.username}, ID: {self.uuid}, Privilage: {self.privilege}"

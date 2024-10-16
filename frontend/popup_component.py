@@ -22,27 +22,26 @@ class Popup(ft.Container):
 
     def open_date_picker(self, e):
         """Open the DatePicker dialog."""
-        self.page.overlay.append(self.date_picker)  
-        self.date_picker.open = True  
+        self.page.overlay.append(self.date_picker)
+        self.date_picker.open = True
         self.page.update()
 
     def update_selected_date(self, e):
 
         #returns the date u select on the calendar
-        selected_date = e.data.split("T")[0]  
-        self.selected_date.value = selected_date 
-        self.date_picker.open = False 
+        selected_date = e.data.split("T")[0]
+        self.selected_date.value = selected_date
+        self.date_picker.open = False
         self.page.update()
 
-    
     def show(self, page: ft.Page):
-        self.page = page 
+        self.page = page
         date_selection_row = ft.Row(
             [
                 self.selected_date,
                 ft.IconButton(
                     icon=ft.icons.CALENDAR_TODAY,
-                    on_click=self.open_date_picker,  
+                    on_click=self.open_date_picker,
                 ),
             ],
             spacing=10,
@@ -78,7 +77,7 @@ class Popup(ft.Container):
                     ft.Row([self.start_time, self.end_time], spacing=10),
                     self.description,
                     ft.Text("Select Date:"),
-                    date_selection_row,  
+                    date_selection_row,
                     ft.Text("Repetition:"),
                     repetition_grid,
                     ft.ElevatedButton("Create Task", on_click=self.submit_task),
