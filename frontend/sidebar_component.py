@@ -13,7 +13,7 @@ class SidebarButton(ft.TextButton):
 
     def hover(self, event: ft.ControlEvent) -> None:
         self.bgcolor = "#E7F5C6" if event.data else ft.colors.TRANSPARENT
-        self.color = "#288173" if event.data else "#E7F5C6"
+        self.color = "#b3ff00" if event.data else "#E7F5C6"
 
 class Sidebar(ft.Container):
     def __init__(self, page: ft.Page) -> None:

@@ -19,9 +19,9 @@ class ProfileDropdown(ft.Container):
         # Content
         self.content = ft.Row(
             controls=[
-                ft.IconButton(ft.icons.PERSON, bgcolor="#E7F5C6", icon_color="#288173"),
+                ft.IconButton(ft.icons.PERSON, bgcolor="#E7F5C6", icon_color="#b3ff00"),
                 ft.Text(f"{username}", size=20, color="#E7F5C6"),
-                ft.IconButton(ft.icons.ARROW_DROP_DOWN, icon_color="#288173"),
+                ft.IconButton(ft.icons.ARROW_DROP_DOWN, icon_color="#b3ff00"),
             ]
         )
 
@@ -36,15 +36,15 @@ class SearchBar(ft.TextField):
         self.height=40
         self.border_radius=23
         self.bgcolor="#E7F5C6"
-        self.color="#288173"
-        self.cursor_color="#288173"
+        self.color="#b3ff00"
+        self.cursor_color="#b3ff00"
         self.focused_border_color=ft.colors.TRANSPARENT
         self.border_color=ft.colors.TRANSPARENT
         self.border = ft.Border(0)
         self.suffix = ft.IconButton(
             ft.icons.SEARCH,
             # bgcolor=ft.colors.RED, # Debugging
-            icon_color="#288173",
+            icon_color="#b3ff00",
             icon_size=20,
             # width=20,
             on_click=lambda _: print("Search button pressed"),
