@@ -47,9 +47,10 @@ class LeftStrip(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
         self.width=279
-        self.height=page.window.height
+        # self.height=page.window.height
         self.bgcolor="#b3ff00"
         self.alignment=ft.alignment.center
+        # self.expand=True
         self.content=ft.Column(
             [
                 ft.Stack(
@@ -89,7 +90,7 @@ class LeftStrip(ft.Container):
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
+            # expand=True
         )
 
 class PageToggle(ft.Text):
@@ -124,6 +125,7 @@ class ConfirmButton(ft.ElevatedButton):
 
 class Login_View(ft.Container):
     def __init__(self, page: ft.Page, database: Database):
+        # Initialization
         super().__init__()
         self.page = page
         self.conn = database
@@ -145,31 +147,36 @@ class Login_View(ft.Container):
             on_click=lambda _: page.go('/signup')
         )
         self.message_label = ft.Text(value="", color="#ff0000")
-        self.main_content = ft.Column(
-            [
-                header,
-                self.username_field,
-                self.password_field,
-                sign_in_button,
-                toggle_page,
-                self.message_label
-            ],
-            spacing=20,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
-        )
+
+        # Styling
+        self.expand = True
+        # self.border=ft.border.all(1, "#FF0000") # Debugging
+        self.margin = 0
+
+        #Content
         self.content = ft.Row(
             [
                 LeftStrip(page=page),
                 ft.Container(
-                    content=self.main_content,
-                    expand=True,
+                    content=ft.Column(
+                        [
+                            header,
+                            self.username_field,
+                            self.password_field,
+                            sign_in_button,
+                            toggle_page,
+                            self.message_label
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
                     alignment=ft.alignment.center,
                     height=page.window.height,
+                    expand=True,
+                    # border=ft.border.all(1, "#FF0000"), # Debugging
                 )
             ],
-            expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
@@ -217,34 +224,34 @@ class Signup_View(ft.Container):
 
         self.message_label = ft.Text(value="", color="#ff0000")
 
-        right_content = ft.Column(
-            [
-                self.confirm_message_label,
-                self.header,
-                self.username_field,
-                self.password_field,
-                self.confirm_password_field,
-                signup_button,
-                self.toggle_page,
-                self.message_label
-            ],
-            spacing=20,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
-        )
+        # Styling
+        self.expand = True
 
+        # Content
         self.content = ft.Row(
             [
                 LeftStrip(page=page),
                 ft.Container(
-                    content=right_content,
-                    expand=True,
-                    alignment=ft.alignment.center,
-                    height=page.window.height,
+                    content=ft.Column(
+                        controls=[
+                            self.confirm_message_label,
+                            self.header,
+                            self.username_field,
+                            self.password_field,
+                            self.confirm_password_field,
+                            signup_button,
+                            self.toggle_page,
+                            self.message_label
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                alignment=ft.alignment.center,
+                height=page.window.height,
+                expand=True,
                 )
             ],
-            expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
@@ -264,7 +271,7 @@ class Signup_View(ft.Container):
         if password != confirm_password:
             self.error_message("Passwords do not match.")
             return
-        
+
         if (self.conn.add_user(User(username=self.username_field.value.strip(), password=password))):
             self.confirm_message_label.value = "Account Created Successfully!"
             self.confirm_message_label.color = "#00ff00"
