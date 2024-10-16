@@ -10,49 +10,36 @@ class Dashboard(ft.Container):
     def __init__(self, page: ft.Page , database: Database):
         super().__init__()
         self.Times = TimeLine(database=database)
-        self.Side = Sidebar()
-        self.Search = Navbar()
+        self.Side = Sidebar(page=page)
+        self.Nav = Navbar(heading="Dashboard", subheading="Todays Progress", username = database.logged_in_user.username if database.logged_in_user else None)
 
-        self.content=ft.Column(
-            controls=[ft.Container(
-                content = ft.Row(
-                    controls=[
-                        ft.Column(
-                        controls= [
-                            ft.Text("Dashboard", size=35, color="#E7F5C6"),
-                            ft.Text("Todays Progress", size=15, color="#E7F5C6"),
+        # Styling
+        # self.border=ft.border.all(1, "#FF0000") # Debugging
+        self.expand = True
+
+        self.content=ft.Row(
+            controls=[
+                self.Side,
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            self.Nav,
+                            self.Times,
                         ],
-                        alignment=ft.MainAxisAlignment.START,
-                        ),
-                        ft.Container(width=500),
-                        self.Search,
-                        ft.Container(width=500),
-                        ft.IconButton(ft.icons.PERSON, bgcolor="#E7F5C6", icon_color="#288173"),
-                        ft.Text("John Doe", size=20, color="#E7F5C6"),
-                        ft.IconButton(ft.icons.ARROW_DROP_DOWN, icon_color="#288173"),
-                    ]
-                ),
-                alignment=ft.alignment.center_left
-            ),
-            ft.Container(
-                content=ft.Row(
-                    controls= [
-                        self.Side,
-                        self.Times,
-                    ]
-                ),
-            ),
-            ft.FloatingActionButton(icon="add", ),
+                    ),
+                    # border=ft.border.all(1, "#FF0000"), # Debugging
+                    expand = True
+                )
             ],
+            expand=True
         )
-
 
 def main(page: ft.Page) -> None:
     page.title = "Locked-In"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.theme_mode = 'dark'
-    dashboard_view = Dashboard()
+    dashboard_view = Dashboard(page=page, database=Database())
 
     page.add(
         dashboard_view

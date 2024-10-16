@@ -1,11 +1,12 @@
 import flet as ft
 from frontend.timeline.task_layer import Task_Layer
 from frontend.timeline.time_layer import Time_Layer
-from backend.database_connector import User
+from backend.database_connector import User, Database
 
 class TimeLine(ft.Container):
     def __init__(self,
-        database=None,
+        database: Database = None,
+        page: ft.Page = None,
         min_height: int = 50,
         time_division: int = 15,
         header_height: int = 50,
@@ -13,8 +14,8 @@ class TimeLine(ft.Container):
         width: int = None,
         user: User = User(
             uuid=1,
-            username="John Doe",
-            privilage="ADMIN",
+            username="JohnDoe",
+            privilege="ADMIN",
             password="password"
         )
     ):
@@ -26,10 +27,7 @@ class TimeLine(ft.Container):
         self.header_height = header_height
 
         # Styling
-        if width is None:
-            self.expand = True
-        else:
-            self.width = width
+        self.expand = True
         self.bgcolor = "#1E1E1E"
         self.border_radius = ft.border_radius.all(10)
         self.height = height

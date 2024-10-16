@@ -33,15 +33,24 @@ class PasswordField(ft.TextField):
 
     def toggle_show_password(self):
         self.password = not self.password
+        self.suffix = ft.IconButton(
+            icon=ft.icons.REMOVE_RED_EYE if self.password else ft.icons.VISIBILITY,
+            tooltip="Show password",
+            on_click=lambda _: self.toggle_show_password(),
+            icon_size=20,
+            padding=0,
+            splash_radius=0
+        )
         self.update()
 
 class LeftStrip(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
         self.width=279
-        self.height=page.window.height
+        # self.height=page.window.height
         self.bgcolor="#b3ff00"
         self.alignment=ft.alignment.center
+        # self.expand=True
         self.content=ft.Column(
             [
                 ft.Stack(
@@ -81,7 +90,7 @@ class LeftStrip(ft.Container):
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
+            # expand=True
         )
 
 class PageToggle(ft.Text):
@@ -102,8 +111,21 @@ class PageToggle(ft.Text):
             ),
         ]
 
+class ConfirmButton(ft.ElevatedButton):
+    def __init__(self, text, on_click):
+        super().__init__()
+        self.text=text
+        self.style=ft.ButtonStyle(
+            bgcolor="#323234",
+            color="#ffffff",
+        )
+        self.width=150
+        self.height=50
+        self.on_click=on_click
+
 class Login_View(ft.Container):
     def __init__(self, page: ft.Page, database: Database):
+        # Initialization
         super().__init__()
         self.page = page
         self.conn = database
@@ -115,14 +137,8 @@ class Login_View(ft.Container):
         )
         self.username_field = UsernameField()
         self.password_field = PasswordField("Password")
-        sign_in_button = ft.ElevatedButton(
-            text="Login",
-            style=ft.ButtonStyle(
-                bgcolor="#323234",
-                color="#ffffff",
-            ),
-            width=150,
-            height=50,
+        sign_in_button = ConfirmButton(
+            text="Sign In",
             on_click=lambda _: self.validate_login(self.username_field.value, self.password_field.value)
         )
         toggle_page = PageToggle(
@@ -131,31 +147,36 @@ class Login_View(ft.Container):
             on_click=lambda _: page.go('/signup')
         )
         self.message_label = ft.Text(value="", color="#ff0000")
-        self.main_content = ft.Column(
-            [
-                header,
-                self.username_field,
-                self.password_field,
-                sign_in_button,
-                toggle_page,
-                self.message_label
-            ],
-            spacing=20,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
-        )
+
+        # Styling
+        self.expand = True
+        # self.border=ft.border.all(1, "#FF0000") # Debugging
+        self.margin = 0
+
+        #Content
         self.content = ft.Row(
             [
                 LeftStrip(page=page),
                 ft.Container(
-                    content=self.main_content,
-                    expand=True,
+                    content=ft.Column(
+                        [
+                            header,
+                            self.username_field,
+                            self.password_field,
+                            sign_in_button,
+                            toggle_page,
+                            self.message_label
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
                     alignment=ft.alignment.center,
                     height=page.window.height,
+                    expand=True,
+                    # border=ft.border.all(1, "#FF0000"), # Debugging
                 )
             ],
-            expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
@@ -186,15 +207,13 @@ class Signup_View(ft.Container):
         self.username_field = UsernameField()
         self.password_field = PasswordField("Password")
         self.confirm_password_field = PasswordField("Confirm Password")
-        signup_button = ft.ElevatedButton(
+        signup_button = ConfirmButton(
             text="Sign Up",
-            style=ft.ButtonStyle(
-                bgcolor="#323234",
-                color="#ffffff",
-            ),
-            width=150,
-            height=50,
-            on_click=lambda _: self.validate_signup(self.password_field.value, self.confirm_password_field.value)
+            on_click=lambda _: self.validate_signup(
+                self.username_field.value,
+                self.password_field.value,
+                self.confirm_password_field.value
+                )
         )
 
         self.toggle_page = PageToggle(
@@ -205,48 +224,69 @@ class Signup_View(ft.Container):
 
         self.message_label = ft.Text(value="", color="#ff0000")
 
-        right_content = ft.Column(
-            [
-                self.confirm_message_label,
-                self.header,
-                self.username_field,
-                self.password_field,
-                self.confirm_password_field,
-                signup_button,
-                self.toggle_page,
-                self.message_label
-            ],
-            spacing=20,
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            expand=True
-        )
+        # Styling
+        self.expand = True
 
+        # Content
         self.content = ft.Row(
             [
                 LeftStrip(page=page),
                 ft.Container(
-                    content=right_content,
-                    expand=True,
-                    alignment=ft.alignment.center,
-                    height=page.window.height,
+                    content=ft.Column(
+                        controls=[
+                            self.confirm_message_label,
+                            self.header,
+                            self.username_field,
+                            self.password_field,
+                            self.confirm_password_field,
+                            signup_button,
+                            self.toggle_page,
+                            self.message_label
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                alignment=ft.alignment.center,
+                height=page.window.height,
+                expand=True,
                 )
             ],
-            expand=True,
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-    def validate_signup(self, password, confirm_password):
+    def validate_signup(self, username: str, password: str, confirm_password: str):
         assert isinstance(password, str) and isinstance(confirm_password, str), "Password and Confirm Password must be strings."
-        if password == confirm_password:
-            if (self.conn.add_user(User(username=self.username_field.value, password=password))):
-                self.confirm_message_label.value = "Account Created Successfully!"
-                self.confirm_message_label.color = "#00ff00"
-                self.page.go('/login')
-                self.page.update()
-            else:
-                self.confirm_message_label.value = "User already exists!"
-                self.confirm_message_label.color = "#ff0000"
+
+        print(username.strip(), password, confirm_password)
+
+        if username.strip() == "" or password == "" or confirm_password == "":
+            self.error_message("Username, password or confirm password cannot be empty.")
+            return
+
+        elif self.username_field.value.strip().isalnum() == False:
+            self.error_message("Username can only contain letters and numbers.")
+            return
+
+        if password != confirm_password:
+            self.error_message("Passwords do not match.")
+            return
+
+        if (self.conn.add_user(User(username=self.username_field.value.strip(), password=password))):
+            self.confirm_message_label.value = "Account Created Successfully!"
+            self.confirm_message_label.color = "#00ff00"
+            self.page.go('/login')
+            self.page.update()
+        else:
+            self.error_message("Username already exists.")
+        self.page.update()
+
+
+    def error_message(self, message: str):
+        self.message_label.value = message
+        self.message_label.color = "#ff0000"
+        self.page.update()
+
 
 def main(page: ft.Page):
     page.title = "Locked-In"

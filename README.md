@@ -44,10 +44,28 @@ MYSQL_PASSWORD="your-password"
 >
 > - For Windows or Mac/Ubuntu: `deactivate`
 
-How to check for data in MySQL:
+## How to check for data in MySQL:
 
-cd into Program Files/MySQL/MySQL Server X.X/bin
-run mysql -u root -p in the terminal and input your password
+For Windows:
+Open a Command Prompt/PowerShell Window and run this
+```
+# replace X.X with your own MYSQL Server version (optionally add this to your environment variables)
+cd "Program Files\MySQL\MySQL Server X.X\bin" 
+run mysql -u root -p
+#enter your password
+
 run USE lockedin;
 run SHOW TABLES;
 run SELECT * FROM (table_name);
+```
+
+For Mac/Linux:
+Open a Terminal window and run this
+```
+run mysql -u root -p 
+#enter your password
+
+run USE lockedin;
+run SHOW TABLES;
+run SELECT * FROM (table_name);
+```
