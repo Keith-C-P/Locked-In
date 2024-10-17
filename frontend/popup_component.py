@@ -22,7 +22,7 @@ class TaskDialogue(ft.AlertDialog):
                 self.selected_date,
                 ft.IconButton(
                     icon=ft.icons.CALENDAR_TODAY,
-                    icon_color="#E7F5C6",
+                    icon_color="#dce1de",
                     on_click=self.open_date_picker,
                 ),
             ],
@@ -122,9 +122,9 @@ def main(page: ft.Page):
 
     button = ft.FloatingActionButton(
         icon=ft.icons.ADD,
-        foreground_color="#E7F5C6",
+        foreground_color="#dce1de",
         on_click=lambda e: task_dialogue.show(),
-        bgcolor="#555555",
+        bgcolor="#010b13",
     )
 
     page.add(button)

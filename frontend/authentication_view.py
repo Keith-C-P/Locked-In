@@ -1,28 +1,28 @@
 import os, sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # Find another way
 import flet as ft
 from backend.database_connector import Database, Task, User
 
 class UsernameField(ft.TextField):
     def __init__(self):
         super().__init__()
-        self.label="Username"
-        self.label_style=ft.TextStyle(size=12, color="#000000")
-        self.width=400
-        self.bgcolor="#ffffff"
-        self.color="#000000"
+        self.label = "Username"
+        self.label_style = ft.TextStyle(size=12, color="#000000")
+        self.width = 400
+        self.bgcolor = "#ffffff"
+        self.color = "#000000"
 
 class PasswordField(ft.TextField):
     def __init__(self, label):
         super().__init__()
-        self.label=label
-        self.label_style=ft.TextStyle(size=12, color="#000000")
-        self.width=400
-        self.bgcolor="#ffffff"
-        self.color="#000000"
-        self.password=True
-        self.text_align=ft.TextAlign.LEFT
-        self.suffix=ft.IconButton(
+        self.label = label
+        self.label_style = ft.TextStyle(size=12, color="#000000")
+        self.width = 400
+        self.bgcolor = "#ffffff"
+        self.color = "#000000"
+        self.password = True
+        self.text_align = ft.TextAlign.LEFT
+        self.suffix = ft.IconButton(
             icon=ft.icons.REMOVE_RED_EYE,
             tooltip="Show password",
             on_click=lambda _: self.toggle_show_password(),
@@ -46,12 +46,10 @@ class PasswordField(ft.TextField):
 class LeftStrip(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
-        self.width=279
-        # self.height=page.window.height
-        self.bgcolor="#49a078"
-        self.alignment=ft.alignment.center
-        # self.expand=True
-        self.content=ft.Column(
+        self.width = 279
+        self.bgcolor = "#49a078"
+        self.alignment = ft.alignment.center
+        self.content = ft.Column(
             [
                 ft.Stack(
                     [
@@ -90,14 +88,13 @@ class LeftStrip(ft.Container):
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            # expand=True
         )
 
 class PageToggle(ft.Text):
     def __init__(self, normal, hyperlink, on_click):
         super().__init__()
-        self.color="#ffffff"
-        self.spans=[
+        self.color = "#ffffff"
+        self.spans = [
             ft.TextSpan(
                 f"{normal}",
             ),
@@ -114,18 +111,17 @@ class PageToggle(ft.Text):
 class ConfirmButton(ft.ElevatedButton):
     def __init__(self, text, on_click):
         super().__init__()
-        self.text=text
-        self.style=ft.ButtonStyle(
+        self.text = text
+        self.style = ft.ButtonStyle(
             bgcolor="#323234",
             color="#ffffff",
         )
-        self.width=150
-        self.height=50
-        self.on_click=on_click
+        self.width = 150
+        self.height = 50
+        self.on_click = on_click
 
 class Login_View(ft.Container):
     def __init__(self, page: ft.Page, database: Database):
-        # Initialization
         super().__init__()
         self.page = page
         self.conn = database
@@ -142,18 +138,17 @@ class Login_View(ft.Container):
             on_click=lambda _: self.validate_login(self.username_field.value, self.password_field.value)
         )
         toggle_page = PageToggle(
-            normal = "New here? Why not ",
-            hyperlink = "Sign Up",
+            normal="New here? Why not ",
+            hyperlink="Sign Up",
             on_click=lambda _: page.go('/signup')
         )
         self.message_label = ft.Text(value="", color="#ff0000")
 
         # Styling
         self.expand = True
-        # self.border=ft.border.all(1, "#FF0000") # Debugging
-        self.margin = 0
+        self.bgcolor = "#010b13"  # Set background color
 
-        #Content
+        # Content
         self.content = ft.Row(
             [
                 LeftStrip(page=page),
@@ -174,14 +169,13 @@ class Login_View(ft.Container):
                     alignment=ft.alignment.center,
                     height=page.window.height,
                     expand=True,
-                    # border=ft.border.all(1, "#FF0000"), # Debugging
                 )
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
     def validate_login(self, username: str, password: str):
-        assert isinstance(username, str) and isinstance(password, str) # Type checking
+        assert isinstance(username, str) and isinstance(password, str)  # Type checking
         print(self.conn.login(username, password))
         if self.conn.logged_in_user:
             self.message_label.color = "#00ff00"
@@ -213,12 +207,12 @@ class Signup_View(ft.Container):
                 self.username_field.value,
                 self.password_field.value,
                 self.confirm_password_field.value
-                )
+            )
         )
 
         self.toggle_page = PageToggle(
-            normal = "Already Locked-In? ",
-            hyperlink = "Login",
+            normal="Already Locked-In? ",
+            hyperlink="Login",
             on_click=lambda _: page.go('/login')
         )
 
@@ -226,6 +220,7 @@ class Signup_View(ft.Container):
 
         # Styling
         self.expand = True
+        self.bgcolor = "#010b13"  # Set background color
 
         # Content
         self.content = ft.Row(
@@ -247,9 +242,9 @@ class Signup_View(ft.Container):
                         alignment=ft.MainAxisAlignment.CENTER,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
-                alignment=ft.alignment.center,
-                height=page.window.height,
-                expand=True,
+                    alignment=ft.alignment.center,
+                    height=page.window.height,
+                    expand=True,
                 )
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -272,7 +267,7 @@ class Signup_View(ft.Container):
             self.error_message("Passwords do not match.")
             return
 
-        if (self.conn.add_user(User(username=self.username_field.value.strip(), password=password))):
+        if self.conn.add_user(User(username=self.username_field.value.strip(), password=password)):
             self.confirm_message_label.value = "Account Created Successfully!"
             self.confirm_message_label.color = "#00ff00"
             self.page.go('/login')
@@ -281,12 +276,10 @@ class Signup_View(ft.Container):
             self.error_message("Username already exists.")
         self.page.update()
 
-
     def error_message(self, message: str):
         self.message_label.value = message
         self.message_label.color = "#ff0000"
         self.page.update()
-
 
 def main(page: ft.Page):
     page.title = "Locked-In"
@@ -300,8 +293,9 @@ def main(page: ft.Page):
         view = view_handler(page).get(page.route, ft.View(controls=[ft.Text("404 Not Found")]))
         page.views.append(view)
         page.update()
+
     page.on_route_change = route_change
     page.go('/login')
 
 if __name__ == "__main__":
-        ft.app(target=main)
+    ft.app(target=main)
