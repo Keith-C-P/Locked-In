@@ -48,7 +48,7 @@ class LeftStrip(ft.Container):
         super().__init__()
         self.width=279
         # self.height=page.window.height
-        self.bgcolor="#b3ff00"
+        self.bgcolor="#49a078"
         self.alignment=ft.alignment.center
         # self.expand=True
         self.content=ft.Column(
@@ -79,7 +79,7 @@ class LeftStrip(ft.Container):
                                     ft.TextStyle(
                                         size=35,
                                         weight=ft.FontWeight.BOLD,
-                                        color="#000000",
+                                        color="#010b13",
                                     ),
                                 ),
                             ],

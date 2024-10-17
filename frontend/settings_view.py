@@ -1,9 +1,9 @@
 import flet as ft
+from sidebar_component import Sidebar  # Correct the import to point directly to sidebar_component
 
-class SettingsPage(ft.Container):
-    def __init__(self, page: ft.Page):
+class SettingsContent(ft.Column):
+    def __init__(self):
         super().__init__()
-        self.page = page
 
         # List of settings options and their descriptions
         self.settings_data = [
@@ -17,15 +17,10 @@ class SettingsPage(ft.Container):
             ("About & Legal", "Terms of service, app version, licenses, documentation")
         ]
 
-        # Settings page layout
-        self.content = ft.Column(
-            controls=self.create_settings_options(),
-            alignment=ft.MainAxisAlignment.CENTER,  # Center vertically
-            horizontal_alignment=ft.CrossAxisAlignment.START,  # Left-align
-            spacing=20
-        )
-        self.alignment = ft.alignment.center
-        self.bgcolor = "#323234"  # Background color
+        # Add settings options to the layout
+        self.controls = self.create_settings_options()
+        self.alignment = ft.MainAxisAlignment.START  # Left-align
+        self.spacing = 20
 
     def create_settings_options(self):
         """Creates a list of left-aligned clickable texts with descriptions."""
@@ -43,7 +38,7 @@ class SettingsPage(ft.Container):
                 padding=ft.padding.only(bottom=4),
                 border_radius=0,
                 on_click=lambda e, opt=option: self.navigate_to_settings(opt),
-                on_hover=self.handle_hover,  # Hover effect handler
+                on_hover=self.handle_hover,  # Ensure this is correctly set
             )
 
             # Description text below the option
@@ -63,11 +58,13 @@ class SettingsPage(ft.Container):
         """Handle hover state, applying green underline and text color."""
         container: ft.Container = e.control
         is_hover = e.data == "true"  # Hover in if true, hover out if false
-        container.content.color = "#b3ff00" if is_hover else ft.colors.WHITE  # Change text color on hover
+        container.content.color = "#49a078" if is_hover else ft.colors.WHITE  # Change text color on hover
         container.border = ft.border.only(
-            bottom=ft.BorderSide(1, "#b3ff00" if is_hover else "transparent")
+            bottom=ft.BorderSide(1, "#49a078" if is_hover else "transparent")
         )  # Add or remove green underline
-        self.page.update()
+
+        # Update the page to reflect changes
+        self.page.update()  # Ensure the page updates after hover effects
 
     def navigate_to_settings(self, option: str):
         """Placeholder function to navigate to different settings pages."""
@@ -75,9 +72,30 @@ class SettingsPage(ft.Container):
         # Implement actual navigation logic later.
 
 
+class SettingsPage(ft.Container):
+    def __init__(self, page: ft.Page):
+        super().__init__()
+        self.page = page
+
+        # Sidebar to take full height
+        self.sidebar = Sidebar(page=page)  # Pass page to Sidebar
+
+        # Settings page layout
+        self.content = ft.Row(
+            controls=[
+                self.sidebar,
+                SettingsContent(),  # Adjust this to ensure it's in the right layout
+            ],
+            expand=True
+        )
+        self.alignment = ft.alignment.center
+        self.bgcolor = "#010b13"  # Background color
+
+
+
 def main(page: ft.Page):
     page.title = "Settings Page"
-    page.bgcolor = "#323234"  # Background color
+    page.bgcolor = "#010b13"  # Background color
 
     # Add the settings page to the app
     page.add(SettingsPage(page))
