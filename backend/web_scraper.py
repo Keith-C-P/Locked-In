@@ -1,6 +1,4 @@
-import requests
 from bs4 import BeautifulSoup
-import flet as ft
 
 class AttendanceFetcher:
     def __init__(self, username, password):
@@ -91,61 +89,3 @@ class AttendanceFetcher:
                 'can_miss_classes': can_miss_classes,
             }
         return results
-
-# GUI for handling login and displaying attendance data
-def main(page: ft.Page):
-    page.title = "Attendance Fetcher"
-
-    username_input = ft.TextField(label="Username", width=300)
-    password_input = ft.TextField(label="Password", password=True, width=300)
-    login_button = ft.ElevatedButton(text="Login", on_click=lambda e: login_action())
-    result_area = ft.Column()
-
-    def login_action():
-        username = username_input.value
-        password = password_input.value
-
-        fetcher = AttendanceFetcher(username, password)
-
-        if fetcher.login():
-            attendance_html = fetcher.fetch_attendance()
-            if attendance_html:
-                attendance_data = fetcher.parse_attendance_data(attendance_html)
-                attendance_results = fetcher.calculate_attendance_metrics(attendance_data)
-                display_attendance(attendance_results)
-
-    def display_attendance(data):
-        result_area.controls.clear()  # Clear previous results
-        # Display attendance information
-        for class_name, metrics in data.items():
-            if metrics['attendance_percentage'] < 75:
-                color = ft.colors.RED
-                requirement_text = f"Required Classes to Attend: {metrics['required_classes']}"
-            else:
-                color = ft.colors.GREEN
-                requirement_text = f"Can Miss Classes: {metrics['can_miss_classes']}"
-
-            result_area.controls.append(ft.Text(
-                f"{class_name}: {metrics['attendance_percentage']:.2f}% - {requirement_text}",
-                size=16,
-                color=color
-            ))
-
-        page.update()
-
-    # Layout
-    page.add(
-        ft.Column(
-            controls=[
-                username_input,
-                password_input,
-                login_button,
-                result_area
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            scroll=True
-        )
-    )
-
-if __name__ == "__main__":
-    ft.app(target=main)

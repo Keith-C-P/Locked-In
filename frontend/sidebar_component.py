@@ -22,7 +22,6 @@ class Sidebar(ft.Container):
 
         # Styling
         self.width = 279
-        self.height = page.window_height  # Set height to full window height
         self.bgcolor = "#32323E"
         self.padding = 20
         self.border_radius = ft.BorderRadius(40, 0, 40, 0)

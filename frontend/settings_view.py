@@ -1,11 +1,62 @@
 import flet as ft
-from sidebar_component import Sidebar  # Correct the import to point directly to sidebar_component
+from sidebar_component import Sidebar
+from navbar_component import Navbar
 
-class SettingsContent(ft.Column):
-    def __init__(self):
+class SettingsOption(ft.Container):
+    def __init__(self, text: str, description: str):
+        # Initialization
         super().__init__()
+        self.text = ft.Container(
+            ft.Text(
+                value=f"{text}",
+                size=18,
+                color=ft.colors.WHITE,
+                weight=ft.FontWeight.BOLD,
+            ),
+            padding=ft.padding.only(bottom=4),
+            border_radius=0,
+            on_click=lambda _: self.navigate_to_settings(text),
+            on_hover=self.handle_hover,
+        )
+        self.description = ft.Text(
+            value=f"{description}",
+            size=12,
+            color=ft.colors.WHITE54,
+        )
 
-        # List of settings options and their descriptions
+        # Styling
+
+        # Content
+        self.content=ft.Column(
+            controls=[
+                self.text,
+                self.description,
+            ],
+        )
+
+    def handle_hover(self, e: ft.ControlEvent):
+        container: ft.Container = e.control
+        is_hover = e.data == "true"
+        if is_hover:
+            container.content.color = "#49a078"
+            container.border = ft.border.only(
+                bottom=ft.BorderSide(1, "#49a078")
+            )
+        else:
+            container.content.color = ft.colors.WHITE
+            container.border = ft.border.only(
+                bottom=ft.BorderSide(1, "transparent")
+            )
+        self.update()
+
+    def navigate_to_settings(self, option):
+        print(f"Redirecting to {option} page...")
+        # page.go(option)
+
+class SettingsContent(ft.Container):
+    def __init__(self):
+        # Initialization
+        super().__init__()
         self.settings_data = [
             ("Account Settings", "Change username, password, profile info, and other stuff"),
             ("Theme & Appearance", "Change how you want it to look"),
@@ -17,91 +68,63 @@ class SettingsContent(ft.Column):
             ("About & Legal", "Terms of service, app version, licenses, documentation")
         ]
 
-        # Add settings options to the layout
-        self.controls = self.create_settings_options()
+        # Styling
         self.alignment = ft.MainAxisAlignment.START  # Left-align
         self.spacing = 20
 
-    def create_settings_options(self):
+        # Content
+        self.content = ft.Column(
+            controls=self.create_settings_options()
+        )
+
+    def create_settings_options(self)-> list[ft.Container]:
         """Creates a list of left-aligned clickable texts with descriptions."""
         settings_controls = []
 
-        for option, description in self.settings_data:
-            # Main clickable option text inside a container for hover effect
-            option_container = ft.Container(
-                content=ft.Text(
-                    value=option,
-                    size=18,
-                    color=ft.colors.WHITE,
-                    weight=ft.FontWeight.BOLD,
-                ),
-                padding=ft.padding.only(bottom=4),
-                border_radius=0,
-                on_click=lambda e, opt=option: self.navigate_to_settings(opt),
-                on_hover=self.handle_hover,  # Ensure this is correctly set
+        for setting, description in self.settings_data:
+            settings_controls.append(
+                SettingsOption(text=setting, description=description)
             )
-
-            # Description text below the option
-            description_text = ft.Text(
-                value=description,
-                size=12,
-                color=ft.colors.WHITE54,  # Slightly faded color for descriptions
-            )
-            
-            # Add both the option container and its description to the controls list
-            settings_controls.append(option_container)
-            settings_controls.append(description_text)
-
         return settings_controls
-
-    def handle_hover(self, e):
-        """Handle hover state, applying green underline and text color."""
-        container: ft.Container = e.control
-        is_hover = e.data == "true"  # Hover in if true, hover out if false
-        container.content.color = "#49a078" if is_hover else ft.colors.WHITE  # Change text color on hover
-        container.border = ft.border.only(
-            bottom=ft.BorderSide(1, "#49a078" if is_hover else "transparent")
-        )  # Add or remove green underline
-
-        # Update the page to reflect changes
-        self.page.update()  # Ensure the page updates after hover effects
-
-    def navigate_to_settings(self, option: str):
-        """Placeholder function to navigate to different settings pages."""
-        print(f"Redirecting to {option} page...")
-        # Implement actual navigation logic later.
 
 
 class SettingsPage(ft.Container):
     def __init__(self, page: ft.Page):
+        # Initialization
         super().__init__()
         self.page = page
+        self.sidebar = Sidebar(page=page)
+        self.navbar = Navbar(heading="Settings", subheading="Manage your account settings")
+        # Styling
+        self.expand = True
 
-        # Sidebar to take full height
-        self.sidebar = Sidebar(page=page)  # Pass page to Sidebar
-
-        # Settings page layout
-        self.content = ft.Row(
+        # Content
+        self.content=ft.Row(
             controls=[
                 self.sidebar,
-                SettingsContent(),  # Adjust this to ensure it's in the right layout
+                ft.Container(
+                    content=ft.Column(
+                        controls=[
+                            self.navbar,
+                            SettingsContent(),
+                        ],
+                    ),
+                    # border=ft.border.all(1, "#FF0000"), # Debugging
+                    expand = True,
+                ),
             ],
             expand=True
         )
         self.alignment = ft.alignment.center
-        self.bgcolor = "#010b13"  # Background color
-
-
+        self.bgcolor = "#010b13"
 
 def main(page: ft.Page):
     page.title = "Settings Page"
-    page.bgcolor = "#010b13"  # Background color
+    page.bgcolor = "#010b13"
 
-    # Add the settings page to the app
     page.add(SettingsPage(page))
     page.update()
 
 
-# Run the Flet app
 if __name__ == "__main__":
     ft.app(target=main)

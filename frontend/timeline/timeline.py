@@ -67,3 +67,10 @@ def main(page : ft.Page) -> None:
 
 if __name__ == "__main__":
     ft.app(target=main)
+
+
+#TODO:
+# [] Rebuild the task list after a task is added
+# [] Sort the tasks by start time
+# [] Give task delete functionality
+# [] Fix positioning of tasks

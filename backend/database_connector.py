@@ -1,5 +1,6 @@
-import os, random, datetime, flet, dataclasses, dotenv, mysql.connector
+import os, random, datetime, mysql.connector
 from flet import colors
+from re import compile, match
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
@@ -35,10 +36,10 @@ class Task():
 
     def __post_init__(self) -> None:
         assert self.date or self.repetition, "Date or repitition must be provided"
-        assert not (self.date and self.repetition), "Date and repitition is not allowed"
         assert 4 <= len(self.name), "Task name must be atleast 4 characters long"
 
         self.length = self.__task_length()
+        assert self.length > 0, "Task length must be greater than 0"
         self.colors = (
             colors.RED_500,
             colors.BLUE_500,
@@ -58,9 +59,9 @@ class Task():
         """
         start_time = self.start_time.split(":")
         end_time = self.end_time.split(":")
-        start_index = int(start_time[0]) * 60 + int(start_time[1])
-        end_index = int(end_time[0]) * 60 + int(end_time[1])
-        return end_index - start_index
+        start_minutes = int(start_time[0]) * 60 + int(start_time[1])
+        end_minutes = int(end_time[0]) * 60 + int(end_time[1])
+        return end_minutes - start_minutes
 
 
 class Database:
@@ -125,7 +126,7 @@ class Database:
         self.conn.commit()
         return True
 
-    def add_task(self, task: Task) -> None:
+    def __add_task(self, task: Task) -> None:
         self.cursor.execute(f"USE {self.APP_NAME};")
         self.cursor.execute(f"""INSERT INTO TASKS (
                             AUTHOR,
@@ -136,7 +137,7 @@ class Database:
                             DATE,
                             REPETITION,
                             SOURCE)
-                            VALUES ('{task.author}',
+                            VALUES ('{self.logged_in_user.uuid}',
                             '{task.name}',
                             '{task.start_time}',
                             '{task.end_time}',
@@ -145,6 +146,21 @@ class Database:
                             '{task.repetition}',
                             '{task.source}');""")
         self.conn.commit()
+
+    def add_task(self, name: str, start_time: str, end_time: str, date: str | None, description: str, repetition: str | None, source: str) -> None | str:
+        if start_time == end_time:
+            return "Start and end times cannot be the same."
+
+        if not date and not repetition:
+            return "Please select a date or repetition."
+
+        date_regex = compile(r"\d{4}-\d{2}-\d{2}$")
+
+        if date and not date_regex.match(date):
+            return "Invalid Date Format. Please use YYYY-MM-DD"
+
+        task = Task(name=name, start_time=start_time, end_time=end_time, date=date, description=description, repetition=repetition, author=self.logged_in_user, source=source)
+        self.__add_task(task)
 
     def get_tasks(self, author: int) -> tuple[Task]:
         today = datetime.date.today()

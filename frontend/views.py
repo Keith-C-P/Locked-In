@@ -3,16 +3,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 from frontend.dashboard_view import Dashboard
 from frontend.authentication_view import Login_View, Signup_View
-from backend.database_connector import Database, User
+from backend.database_connector import Database
 
-def view_handler(page: ft.Page, database: Database, user: User = User(username="JohnDoe", password="12345678", uuid=0, privilege="USER", )) -> dict[str, ft.View]:
+def view_handler(page: ft.Page, database: Database) -> dict[str, ft.View]:
     return {
-        '/': ft.View(
-            route='/',
-            controls=[
-                Dashboard(page=page, database=database),
-            ],
-        ),
+        '/': Dashboard(page=page, database=database),
         '/login': ft.View(
             route='/login',
             controls=[
@@ -26,3 +21,6 @@ def view_handler(page: ft.Page, database: Database, user: User = User(username="
             ],
         ),
     }
+
+#TODO:
+# [] Convert to ft.View class

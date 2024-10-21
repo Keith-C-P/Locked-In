@@ -4,7 +4,7 @@ from backend.database_connector import Database, User
 import flet as ft
 
 class ProfileDropdown(ft.Container):
-    def __init__(self, username: str = "John Doe") -> None:
+    def __init__(self, username: str | None = None) -> None:
         # Initialization
         super().__init__()
 
@@ -14,13 +14,13 @@ class ProfileDropdown(ft.Container):
         self.border_radius = ft.BorderRadius(23, 23, 23, 23)
         self.padding = 20
         self.alignment = ft.alignment.center
-        # self.border = ft.border.all(1, "#FF0000")  # Debugging
+        # self.border = ft.border.all(1, "#FF0000") # Debugging
 
         # Content
         self.content = ft.Row(
             controls=[
                 ft.IconButton(ft.icons.PERSON, bgcolor="#dce1de", icon_color="#49a078"),
-                ft.Text(f"{username}", size=20, color="#dce1de"),
+                ft.Text(f"{username if username  else 'Samba'}", size=20, color="#dce1de"),
                 ft.IconButton(ft.icons.ARROW_DROP_DOWN, icon_color="#49a078"),
             ]
         )
@@ -44,9 +44,9 @@ class SearchBar(ft.TextField):
         self.border = ft.Border(0)
         self.suffix = ft.IconButton(
             ft.icons.SEARCH,
-            # bgcolor=ft.colors.RED,  # Debugging
-            icon_color="#49a078",
-            icon_size=20,
+            # bgcolor=ft.colors.RED, # Debugging
+            icon_color="#288173",
+            icon_size=25,
             # width=20,
             on_click=lambda _: print("Search button pressed"),
         )
@@ -58,7 +58,7 @@ class Navbar(ft.Container):
 
         # Styling
         self.height = 100
-        # self.border = ft.border.all(1, "#FF0000")  # Debugging
+        # self.border = ft.border.all(1, "#FF0000") # Debugging
 
         # Content
         self.content = ft.Row(
@@ -70,7 +70,7 @@ class Navbar(ft.Container):
                             ft.Text(f"{subheading}", size=15, color="#dce1de"),
                         ],
                     ),
-                    # border=ft.border.all(1, "#FF0000")  # Debugging
+                    # border=ft.border.all(1, "#FF0000") # Debugging
                 ),
                 SearchBar(),
                 ProfileDropdown(username=username),

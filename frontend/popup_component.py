@@ -1,164 +1,238 @@
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 import datetime
+import re
+from backend.database_connector import Database
+
+class Repeat(ft.Container):
+    def __init__(self) -> None:
+        # Initialization
+        super().__init__()
+        self.repetition_options = [ft.Segment(label = ft.Text(value=day), value = day) for day in ("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")]
+        self.selected_days : str = ""
+        self.repeat = ft.SegmentedButton(
+            segments = self.repetition_options,
+            allow_multiple_selection=True,
+            allow_empty_selection=True,
+            selected={},
+            selected_icon=ft.Container(),
+            width=450,
+            style=ft.ButtonStyle(),
+            on_change=self.handle_change
+        )
+        self.message_label = ft.Text(value="", color="#ff0000")
+
+        # Styling
+        self.width = 400
+        self.border_radius = 2
+        self.alignment = ft.alignment.center
+        # self.border = ft.border.all(1, "#ff0000") # Debugging
+        # self.margin = 5
+
+        # Content
+        self.content = ft.Column(
+            controls=[
+                ft.Text("Repeat"),
+                self.repeat,
+            ]
+        )
+
+    def get_selected_days(self) -> str:
+        selected = "".join(self.selected_days)
+        selected = re.sub(r"[\[\]\"\'\s]", "", selected)
+        selected = re.sub(r"\,", " ", selected)
+        print("Selected Days:", selected)
+        return selected
+
+    def handle_change(self, e: ft.ControlEvent) -> None:
+        self.selected_days = e.data
 
 class TaskDialogue(ft.AlertDialog):
-    def __init__(self, page):
+    def __init__(self, page: ft.Page, database: Database):
+        # Initialization
         super().__init__()
-        self.page = page
-        self.task_name = ft.TextField(label="Task Name", width=300)
-
-        #Elevated buttons for start and end time (im not sure which other buttons to use but these are fine too ig)
-        self.start_time = ft.ElevatedButton(
-            text="Start Time (HH:MM)", width=125, on_click=self.open_start_time_picker
+        self.page: ft.Page = page
+        self.conn: Database = database
+        self.start_time: str | None = None
+        self.end_time: str | None = None
+        self.task_name = ft.TextField(
+            label="Task Name",
+            hint_text="Enter Task Name",
         )
-        self.end_time = ft.ElevatedButton(
-            text="End Time (HH:MM)", width=125, on_click=self.open_end_time_picker
-        )
-
-        #time picker
         self.start_time_picker = ft.TimePicker(on_change=self.update_start_time)
         self.end_time_picker = ft.TimePicker(on_change=self.update_end_time)
 
-        self.description = ft.TextField(
-            label="Description", multiline=True, width=300, height=100, min_lines=3
+        #Elevated buttons for start and end time (im not sure which other buttons to use but these are fine too ig)
+        self.start_time_button = ft.ElevatedButton(
+            text="Start Time",
+            width=125,
+            on_click=lambda _: page.open(self.start_time_picker)
         )
-        self.selected_date = ft.Text(value=str(datetime.date.today()), width=200)
+
+        self.end_time_button = ft.ElevatedButton(
+            text="End Time",
+            width=125,
+            on_click=lambda _: page.open(self.end_time_picker)
+        )
+
+        self.description = ft.TextField(
+            label="Description",
+            multiline=True,
+            # width=300,
+            height=100,
+            min_lines=3,
+            hint_text="Enter Task Description",
+        )
+
+        self.error_label = ft.Text(value="", color="#ff0000")
 
         self.date_picker = ft.DatePicker(
-            value=datetime.date.today(), on_change=self.update_selected_date
+            value=datetime.date.today(),
+            on_change=self.update_selected_date
         )
-
-        date_selection_row = ft.Row(
-            [
-                self.selected_date,
-                ft.IconButton(
+        self.date = ft.TextField(
+            label="",
+            value=str(datetime.date.today()),
+            # width=200,
+            height=40,
+            suffix=ft.IconButton(
                     icon=ft.icons.CALENDAR_TODAY, #you can also use an image here like samba.png :0
                     icon_color="#dce1de",
-                    on_click=self.open_date_picker,
+                    icon_size=25,
+                    on_click=lambda _: page.open(self.date_picker),
                 ),
-            ],
-            spacing=10,
         )
+        self.repeat = Repeat()
 
-        # Repetition checkboxes
-        repetition_options = [
-            ft.Checkbox(label="Mon", width=50),
-            ft.Checkbox(label="Tue", width=50),
-            ft.Checkbox(label="Wed", width=50),
-            ft.Checkbox(label="Thu", width=50),
-            ft.Checkbox(label="Fri", width=50),
-            ft.Checkbox(label="Sat", width=50),
-            ft.Checkbox(label="Sun", width=50),
-            ft.Checkbox(label="Daily", width=50),
-        ]
-        self.repetition_options = repetition_options
+        # Styling
 
-        repetition_grid = ft.Row(
-            [
-                ft.Column(repetition_options[:4], tight=True),
-                ft.Column(repetition_options[4:], tight=True),
-            ],
-            spacing=10,
-            alignment=ft.MainAxisAlignment.SPACE_AROUND,
-        )
-
-        self.modal = True  # Modal dialog styling
-
+        # Content
         self.content = ft.Column(
             [
                 self.task_name,
-                ft.Row([self.start_time, self.end_time], spacing=10),
                 self.description,
+                ft.Container(
+                    ft.Row(
+                        controls=[
+                            self.start_time_button,
+                            self.end_time_button
+                        ],
+                        spacing=10
+                    ),
+                    # self.border = ft.border.all(1, "#ff0000") # Debugging
+                    # expand=True
+                ),
                 ft.Text("Select Date:"),
-                date_selection_row,
-                ft.Text("Repetition:"),
-                repetition_grid,
-                ft.ElevatedButton("Create Task", on_click=self.submit_task),
+                self.date,
+                self.repeat,
+                ft.Container(
+                    content=ft.ElevatedButton("Create Task", on_click=self.submit_task),
+                    alignment=ft.alignment.center_right,
+                    # border = ft.border.all(1, "#ff0000") # Debugging
+                ),
+                self.error_label,
             ],
             tight=True,
         )
 
-    def open_date_picker(self, e):
-        self.page.overlay.append(self.date_picker)
-        self.date_picker.open = True
-        self.page.update()
-
-    def open_start_time_picker(self, e):
-        self.page.overlay.append(self.start_time_picker)
-        self.start_time_picker.open = True
-        self.page.update()
-
-    def open_end_time_picker(self, e):
-        self.page.overlay.append(self.end_time_picker)
-        self.end_time_picker.open = True
-        self.page.update()
-
-    def update_start_time(self, e):
+    def update_start_time(self, e: ft.ControlEvent):
         hour, minute = map(int, e.data.split(":"))
         formatted_time = f"{hour:02}:{minute:02}"  # Ensure two digits (cuz this was being gay earlier)
-        self.start_time.text = f"Start: {formatted_time}"
-        self.start_time_picker.open = False
-        self.page.update()
+        self.start_time_button.text = f"Start: {formatted_time}"
+        self.start_time = formatted_time
+        print("Start Time:", self.start_time)
+        self.update()
 
-    def update_end_time(self, e):
+    def update_end_time(self, e: ft.ControlEvent):
         hour, minute = map(int, e.data.split(":"))
         formatted_time = f"{hour:02}:{minute:02}"  # Ensure two digits
-        self.end_time.text = f"End: {formatted_time}"
-        self.end_time_picker.open = False
-        self.page.update()
+        self.end_time_button.text = f"End: {formatted_time}"
+        self.end_time = formatted_time
+        print("End Time:", self.end_time)
+        self.update()
 
-    def update_selected_date(self, e):
+    def update_selected_date(self, e: ft.ControlEvent):
         selected_date = e.data.split("T")[0]
-        self.selected_date.value = selected_date
-        self.date_picker.open = False
-        self.page.update()
+        self.date.value = selected_date
+        # self.date_picker.open = False
+        self.update()
 
     def submit_task(self, e):
-        selected_days = [chk.label for chk in self.repetition_options if chk.value]
+        if not self.task_name.value:
+            self.error("Task name is required.")
+            return
+
+        if not self.start_time or not self.end_time:
+            self.error("Start and end time are required.")
+            return
+
+        if self.task_length() <= 0:
+            # print(self.task_length())
+            self.error("Task length must be greater than 0.")
+            return
 
         task_data = {
             "name": self.task_name.value,
-            "start_time": self.start_time.text,
-            "end_time": self.end_time.text,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
             "description": self.description.value,
-            "date": self.selected_date.value,
-            "repetition": selected_days,
+            "date": self.date.value,
+            "repetition": self.repeat.get_selected_days(),
         }
+
+        added_task = self.conn.add_task(
+            name=self.task_name.value,
+            start_time=self.start_time,
+            end_time=self.end_time,
+            date=self.date.value,
+            description=self.description.value,
+            repetition=self.repeat.get_selected_days(),
+            source="user",
+        )
+
+        if added_task:
+            self.error(added_task)
+            return
 
         print("Task Submitted:", task_data)
 
-        snack_bar = ft.SnackBar(ft.Text("Task Created!"))
+        snack_bar = ft.SnackBar(
+            content=ft.Text("Task Created!")
+        )
         self.page.overlay.append(snack_bar)
         snack_bar.open = True
-        self.page.update()
+        self.update()
 
-        self.dismiss()
+        self.page.close(self)
 
-    def dismiss(self):
-        self.page.overlay.remove(self)
-        self.open = False
-        self.page.update()
+    def task_length(self) -> int:
+        if not self.start_time or not self.end_time:
+            return 0
+        start_time = tuple(map(int , self.start_time.split(":")))
+        end_time = tuple(map(int , self.end_time.split(":")))
+        start_minutes = int(start_time[0]) * 60 + int(start_time[1])
+        end_minutes = int(end_time[0]) * 60 + int(end_time[1])
+        print("Task Length:", end_minutes - start_minutes)
+        return end_minutes - start_minutes
 
-    def show(self):
-        self.page.overlay.append(self)
-        self.open = True
-        self.page.update()
+    def error(self, message: str):
+        self.error_label.value = message if message else ""
+        self.update()
 
 def main(page: ft.Page):
     page.title = "Popup Task Creation"
     page.theme_mode = 'dark'
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
 
-    task_dialogue = TaskDialogue(page)
-
     button = ft.FloatingActionButton(
         icon=ft.icons.ADD,
         foreground_color="#dce1de",
-        on_click=lambda e: task_dialogue.show(),
+        on_click=lambda e: page.open(TaskDialogue(page=page, database=Database())),
         bgcolor="#010b13",
     )
 
     page.add(button)
-
 if __name__ == "__main__":
     ft.app(target=main)
+

@@ -100,27 +100,12 @@ class Task_Layer(ft.Container):
             height=self.total_height,
         )
 
-    def add_task(self, task: Task) -> None:
+    def update_task_list(self) -> None:
         """
         Add a task to the task list
         """
-        # print(f"Adding task: {task.name}, Start: {task.start_time}, End: {task.end_time}")
-        if task.color is None:
-            task.color = random.choice(self.colors)
-        self.task_list.append(task)
+        self.task_list = self.conn.get_tasks(self.conn.logged_in_user.uuid)
         self.__task_builder()
-        # if self.page is None:
-        #     self.update()
-
-    def __task_length(self, task: Task) -> int:
-        """
-        Calculate the length of the task in minutes
-        """
-        start_time = task.start_time.split(":")
-        end_time = task.end_time.split(":")
-        start_index = int(start_time[0]) * 60 + int(start_time[1])
-        end_index = int(end_time[0]) * 60 + int(end_time[1])
-        return end_index - start_index
 
     def __task_builder(self, task_list: tuple[Task]) -> None:
         """
