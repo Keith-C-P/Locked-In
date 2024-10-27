@@ -1,8 +1,7 @@
 import flet as ft
 import datetime
-from sidebar_component import Sidebar  # Import the Sidebar from the frontend folder
+from frontend.sidebar_component import Sidebar
 
-# Mess menu for each day
 class MessMenuDay(ft.Container):
     def __init__(self, day, breakfast, lunch, dinner):
         super().__init__()
@@ -22,68 +21,58 @@ class MessMenuDay(ft.Container):
             spacing=15
         )
 
-# Example Mess Data (You can replace this with the actual data)
-menu_data = {
-    "Monday": {
-        "breakfast": "Bread, Butter, Jam, Millet Dosa, Tea/Coffee, Boiled Egg",
-        "lunch": "Chappathi, Rajma Masala, Jeera Pulao, Steamed Rice, Arachivitta Sambar, Pineapple Rasam",
-        "dinner": "Madras Paratha, Mattar Paneer Masala, Steamed Rice, Hara Moong Dal, Sambar"
-    },
-    "Tuesday": {
-        "breakfast": "Bread, Butter, Jam, Poori, Dal Aloo Masala, Tea/Coffee",
-        "lunch": "Chappathi, Meal Maker Curry, Bahara Pulao, Variety Rice, Curd Rice",
-        "dinner": "Punjabi Paratha, Black Channa, Steamed Rice, Dal Fry, Veg Chilli"
-    },
-    "Wednesday": {
-        "breakfast": "Upma, Sambar, Coconut Chutney, Tea/Coffee",
-        "lunch": "Dosa, Chutney, Steamed Rice, Mixed Vegetable Curry",
-        "dinner": "Pasta, Garlic Bread, Salad"
-    },
-    "Thursday": {
-        "breakfast": "Idli, Sambar, Coconut Chutney, Tea/Coffee",
-        "lunch": "Rice, Dal Tadka, Vegetable Curry",
-        "dinner": "Paneer Tikka, Naan, Raita"
-    },
-    "Friday": {
-        "breakfast": "Cornflakes, Milk, Banana",
-        "lunch": "Biryani, Raita, Salad",
-        "dinner": "Pizza, Garlic Bread, Soft Drink"
-    },
-    "Saturday": {
-        "breakfast": "Aloo Paratha, Curd, Tea/Coffee",
-        "lunch": "Khichdi, Papad, Pickle",
-        "dinner": "Vegetable Fried Rice, Manchurian"
-    },
-    "Sunday": {
-        "breakfast": "Pancakes, Maple Syrup, Tea/Coffee",
-        "lunch": "Grilled Chicken, Veg Salad, Rice",
-        "dinner": "Burgers, Fries"
-    },
-}
-
-# Main Mess Menu Page
 class MessMenuPage(ft.Container):
     def __init__(self, page: ft.Page):
         super().__init__()
+        self.menu_data = {
+            "Monday": {
+                "breakfast": "Bread, Butter, Jam, Millet Dosa, Tea/Coffee, Boiled Egg",
+                "lunch": "Chappathi, Rajma Masala, Jeera Pulao, Steamed Rice, Arachivitta Sambar, Pineapple Rasam",
+                "dinner": "Madras Paratha, Mattar Paneer Masala, Steamed Rice, Hara Moong Dal, Sambar"
+            },
+            "Tuesday": {
+                "breakfast": "Bread, Butter, Jam, Poori, Dal Aloo Masala, Tea/Coffee",
+                "lunch": "Chappathi, Meal Maker Curry, Bahara Pulao, Variety Rice, Curd Rice",
+                "dinner": "Punjabi Paratha, Black Channa, Steamed Rice, Dal Fry, Veg Chilli"
+            },
+            "Wednesday": {
+                "breakfast": "Upma, Sambar, Coconut Chutney, Tea/Coffee",
+                "lunch": "Dosa, Chutney, Steamed Rice, Mixed Vegetable Curry",
+                "dinner": "Pasta, Garlic Bread, Salad"
+            },
+            "Thursday": {
+                "breakfast": "Idli, Sambar, Coconut Chutney, Tea/Coffee",
+                "lunch": "Rice, Dal Tadka, Vegetable Curry",
+                "dinner": "Paneer Tikka, Naan, Raita"
+            },
+            "Friday": {
+                "breakfast": "Cornflakes, Milk, Banana",
+                "lunch": "Biryani, Raita, Salad",
+                "dinner": "Pizza, Garlic Bread, Soft Drink"
+            },
+            "Saturday": {
+                "breakfast": "Aloo Paratha, Curd, Tea/Coffee",
+                "lunch": "Khichdi, Papad, Pickle",
+                "dinner": "Vegetable Fried Rice, Manchurian"
+            },
+            "Sunday": {
+                "breakfast": "Pancakes, Maple Syrup, Tea/Coffee",
+                "lunch": "Grilled Chicken, Veg Salad, Rice",
+                "dinner": "Burgers, Fries"
+            },
+        }
         self.page = page
-
-        # Sidebar
         self.sidebar = Sidebar(page=page)
-
-        # Header
         self.header = ft.Text("Mess Menu for Hostellers", size=24, color=ft.colors.WHITE, weight=ft.FontWeight.BOLD)
-
-        # Detect today's day
         today = datetime.datetime.now().strftime('%A')
-
-        # Set the initial day's menu
-        self.current_day = today if today in menu_data else "Monday"
+        self.current_day = today if today in self.menu_data else "Monday"
         self.menu_display = self.get_day_menu(self.current_day)
-
-        # Day Navigation Buttons (Monday to Sunday)
         self.day_buttons = self.create_day_buttons()
 
-        # Main layout
+        # Styling
+        self.expand=True
+
+        # Content
         self.content = ft.Row(
             controls=[
                 self.sidebar,  # Sidebar on the left
@@ -140,7 +129,7 @@ class MessMenuPage(ft.Container):
 
     def get_day_menu(self, day):
         """Get the menu for the specified day."""
-        menu = menu_data.get(day, {"breakfast": "", "lunch": "", "dinner": ""})
+        menu = self.menu_data.get(day, {"breakfast": "", "lunch": "", "dinner": ""})
         return MessMenuDay(day, menu["breakfast"], menu["lunch"], menu["dinner"])
 
 def main(page: ft.Page):
@@ -148,7 +137,7 @@ def main(page: ft.Page):
     page.bgcolor = "#010b13"  # Black background
     mess_menu_view = MessMenuPage(page)
     page.add(mess_menu_view)
-    page.update()
+
 
 if __name__ == "__main__":
     ft.app(target=main)

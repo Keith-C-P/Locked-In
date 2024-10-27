@@ -3,7 +3,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 import datetime
 import re
-from frontend.timeline.task_layer import Task_Layer
+from frontend.timeline_component.task_layer import Task_Layer
 from backend.database_connector import Database
 
 class Repeat(ft.Container):
@@ -17,9 +17,8 @@ class Repeat(ft.Container):
             allow_multiple_selection=True,
             allow_empty_selection=True,
             selected={},
-            selected_icon=ft.Container(),
-            width=450,
-            style=ft.ButtonStyle(),
+            selected_icon=ft.Container(margin=ft.margin.all(0), padding=ft.padding.all(0)),
+            width=500,
             on_change=self.handle_change
         )
         self.message_label = ft.Text(value="", color="#ff0000")

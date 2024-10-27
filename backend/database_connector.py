@@ -50,6 +50,7 @@ class Task():
         )
         if not self.color or self.color not in self.colors:
             self.color = random.choice(self.colors)
+
     def __str__(self):
         return f"Task: {self.name}, ID: {self.taskid}, Author: {self.author}, Date: {self.date}, Repition: {self.repetition}, Source: {self.source}"
 
@@ -62,7 +63,6 @@ class Task():
         start_minutes = int(start_time[0]) * 60 + int(start_time[1])
         end_minutes = int(end_time[0]) * 60 + int(end_time[1])
         return end_minutes - start_minutes
-
 
 class Database:
     def __init__(self, app_name: str = "LOCKEDIN") -> None:

@@ -3,6 +3,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 from frontend.dashboard_view import Dashboard
 from frontend.authentication_view import Login_View, Signup_View
+from frontend.mess_menu_view import MessMenuPage
+from frontend.settings_view import SettingsPage
 from backend.database_connector import Database
 
 def view_handler(page: ft.Page, database: Database) -> dict[str, ft.View]:
@@ -18,6 +20,18 @@ def view_handler(page: ft.Page, database: Database) -> dict[str, ft.View]:
             route='/signup',
             controls=[
                 Signup_View(page=page, database=database),
+            ],
+        ),
+        '/mess-menu': ft.View(
+            route='/mess-menu',
+            controls=[
+                MessMenuPage(page=page),
+            ],
+        ),
+        '/settings': ft.View(
+            route='/settings',
+            controls=[
+                SettingsPage(page=page),
             ],
         ),
     }

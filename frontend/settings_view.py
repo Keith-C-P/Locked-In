@@ -1,6 +1,6 @@
 import flet as ft
-from sidebar_component import Sidebar
-from navbar_component import Navbar
+from frontend.sidebar_component import Sidebar
+from frontend.navbar_component import Navbar
 from typing import List  # For type hinting
 
 class SettingsOption(ft.Container):
@@ -99,7 +99,7 @@ class SettingsPage(ft.Container):
         self.page = page
         self.sidebar = Sidebar(page=page)
         self.navbar = Navbar(heading="Settings", subheading="Manage your account settings")
-        
+
         # Content
         super().__init__(
             content=ft.Row(

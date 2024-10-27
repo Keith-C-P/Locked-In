@@ -181,7 +181,6 @@ class Login_View(ft.Container):
             self.message_label.color = "#00ff00"
             self.message_label.value = "Login successful!"
             self.page.go('/')
-            self.page.update()
         else:
             self.message_label.color = "#ff0000"
             self.message_label.value = "Invalid Username or Password"
