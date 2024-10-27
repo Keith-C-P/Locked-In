@@ -302,3 +302,4 @@ if __name__ == "__main__":
 
 #TODO:
 # [] Add a error message for the login page
+# gives the error for sign up during login if you put less than 8 chars (in password)
