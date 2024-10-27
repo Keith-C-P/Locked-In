@@ -44,12 +44,12 @@ class Dashboard(ft.View):
                 foreground_color="#dce1de",
                 on_click=lambda e: page.open(TaskDialogue(page=page, database=database, task_layer=self.Times.task_layer, rehydrate_task_layer=self.Times.rehydrate_task_layer)),
             ),
-            ft.TextButton(
-                text="Rehydrate",
-                on_click=lambda e: self.Times.rehydrate_task_layer(),
-                # bgcolor="#49a078",
-                # foreground_color="#dce1de",
-            ),
+            # ft.TextButton(
+            #     text="Rehydrate",
+            #     on_click=lambda e: self.Times.rehydrate_task_layer(),
+            #     # bgcolor="#49a078",
+            #     # foreground_color="#dce1de",
+            # ),
         ]
 
 def main(page: ft.Page) -> None:
