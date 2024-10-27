@@ -1,6 +1,7 @@
 import flet as ft
 import datetime
 from frontend.sidebar_component import Sidebar
+from frontend.navbar_component import Navbar
 
 class MessMenuDay(ft.Container):
     def __init__(self, day, breakfast, lunch, dinner):
@@ -63,7 +64,7 @@ class MessMenuPage(ft.Container):
         }
         self.page = page
         self.sidebar = Sidebar(page=page)
-        self.header = ft.Text("Mess Menu for Hostellers", size=24, color=ft.colors.WHITE, weight=ft.FontWeight.BOLD)
+        self.navbar = Navbar(heading="Mess Menu", subheading="Check out today's meals")
         today = datetime.datetime.now().strftime('%A')
         self.current_day = today if today in self.menu_data else "Monday"
         self.menu_display = self.get_day_menu(self.current_day)
@@ -79,7 +80,7 @@ class MessMenuPage(ft.Container):
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            self.header,
+                            self.navbar,
                             ft.Row(controls=self.day_buttons, alignment=ft.MainAxisAlignment.CENTER, spacing=8),
                             ft.Divider(height=2, color=ft.colors.WHITE),
                             self.menu_display  # Show today's menu initially

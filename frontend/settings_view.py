@@ -1,78 +1,56 @@
 import flet as ft
 from frontend.sidebar_component import Sidebar
 from frontend.navbar_component import Navbar
-from typing import List  # For type hinting
+from typing import List
 
 class SettingsOption(ft.Container):
     def __init__(self, text: str, description: str):
-        # Initialization
-        super().__init__()  # Init the container
-        self.text = ft.Container(
-            ft.Text(
-                value=f"{text}",
-                size=18,
-                color=ft.colors.WHITE,
-                weight=ft.FontWeight.BOLD,
-            ),
-            padding=ft.padding.only(bottom=4),
-            border_radius=0,
-            on_click=lambda _: self.navigate_to_settings(text),
-            on_hover=self.handle_hover,
+        super().__init__()
+        self.text_control = ft.Text(
+            value=text,
+            size=18,
+            color=ft.colors.WHITE,
+            weight=ft.FontWeight.BOLD,
         )
-        self.description = ft.Text(
-            value=f"{description}",
+        
+        self.description_control = ft.Text(
+            value=description,
             size=12,
             color=ft.colors.WHITE54,
         )
 
-        # Content - Make sure to pass content to super
         super().__init__(
             content=ft.Column(
-                controls=[
-                    self.text,
-                    self.description,
-                ],
-            )
+                controls=[self.text_control, self.description_control],
+            ),
+            on_hover=self.handle_hover,  # Attach hover here, not inside text
+            border=ft.border.only(bottom=ft.BorderSide(1, "transparent")),
+            padding=ft.padding.symmetric(vertical=10)
         )
 
     def handle_hover(self, e: ft.ControlEvent):
-        container: ft.Container = e.control
         is_hover = e.data == "true"
-        if is_hover:
-            container.content.controls[0].color = "#49a078"  # Change the text color on hover
-            container.border = ft.border.only(
-                bottom=ft.BorderSide(1, "#49a078")
-            )
-        else:
-            container.content.controls[0].color = ft.colors.WHITE  # Reset the text color
-            container.border = ft.border.only(
-                bottom=ft.BorderSide(1, "transparent")
-            )
+        self.text_control.color = "#49a078" if is_hover else ft.colors.WHITE
+        self.border = ft.border.only(bottom=ft.BorderSide(1, "#49a078" if is_hover else "transparent"))
         self.update()
 
     def navigate_to_settings(self, option):
         print(f"Redirecting to {option} page...")
-        # page.go(option)  # Uncomment this for actual navigation
 
 class SettingsContent(ft.Container):
     def __init__(self):
-        # Initialization
         super().__init__()
-
-        # Styling
-        self.alignment = ft.MainAxisAlignment.START  # Left-align
+        self.alignment = ft.MainAxisAlignment.START
         self.spacing = 20
 
-        # Content
         super().__init__(
             content=ft.Column(
                 controls=self.create_settings_options(),
-                expand=True  # Expand to fill space
+                expand=True
             )
         )
 
     def create_settings_options(self) -> List[ft.Container]:
-        """Creates a list of left-aligned clickable texts with descriptions."""
         settings_controls = []
 
         settings_data = [
@@ -94,25 +72,33 @@ class SettingsContent(ft.Container):
 
 class SettingsPage(ft.Container):
     def __init__(self, page: ft.Page):
-        # Initialization
         super().__init__()
         self.page = page
         self.sidebar = Sidebar(page=page)
         self.navbar = Navbar(heading="Settings", subheading="Manage your account settings")
 
-        # Content
         super().__init__(
             content=ft.Row(
                 controls=[
-                    self.sidebar,
-                    ft.Container(
+                    ft.Container(  # Sidebar Container with rounded corners
+                        content=self.sidebar,
+                        width=280,
+                        height=page.height,  # Ensure full height for sidebar
+                        bgcolor="#32323E",
+                        border_radius=ft.border_radius.only(
+                            top_left=40, bottom_left=40  # Rounded corners on the left
+                        ),
+                        alignment=ft.alignment.top_left,
+                    ),
+                    ft.Container(  # Main content area
                         content=ft.Column(
-                            controls=[
-                                self.navbar,
-                                SettingsContent(),
-                            ],
+                            controls=[self.navbar, SettingsContent()],
+                            alignment=ft.MainAxisAlignment.START,
+                            spacing=30
                         ),
                         expand=True,
+                        padding=20,
+                        bgcolor="#010b13"
                     ),
                 ],
                 expand=True,
@@ -123,6 +109,11 @@ class SettingsPage(ft.Container):
 def main(page: ft.Page):
     page.title = "Settings Page"
     page.bgcolor = "#010b13"
+    page.update()
+
+    # Set page size or ensure the sidebar fills the page
+    page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
+    page.vertical_alignment = ft.MainAxisAlignment.STRETCH
 
     page.add(SettingsPage(page))
     page.update()
