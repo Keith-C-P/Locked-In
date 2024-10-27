@@ -1,6 +1,6 @@
 import flet as ft
 import datetime
-from frontend.sidebar_component import Sidebar
+from sidebar_component import Sidebar
 
 class MessMenuDay(ft.Container):
     def __init__(self, day, breakfast, lunch, dinner):

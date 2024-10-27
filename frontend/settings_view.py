@@ -1,6 +1,6 @@
 import flet as ft
-from frontend.sidebar_component import Sidebar
-from frontend.navbar_component import Navbar
+from sidebar_component import Sidebar
+from navbar_component import Navbar
 from typing import List  # For type hinting
 
 class SettingsOption(ft.Container):
