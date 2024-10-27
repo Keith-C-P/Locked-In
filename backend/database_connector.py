@@ -128,23 +128,25 @@ class Database:
 
     def __add_task(self, task: Task) -> None:
         self.cursor.execute(f"USE {self.APP_NAME};")
-        self.cursor.execute(f"""INSERT INTO TASKS (
-                            AUTHOR,
-                            TASK_NAME,
-                            START_TIME,
-                            END_TIME,
-                            DESCRIPTION,
-                            DATE,
-                            REPETITION,
-                            SOURCE)
-                            VALUES ('{self.logged_in_user.uuid}',
-                            '{task.name}',
-                            '{task.start_time}',
-                            '{task.end_time}',
-                            '{task.description}',
-                            '{task.date}',
-                            '{task.repetition}',
-                            '{task.source}');""")
+        self.cursor.execute(
+            f"""INSERT INTO TASKS (
+            AUTHOR,
+            TASK_NAME,
+            START_TIME,
+            END_TIME,
+            DESCRIPTION,
+            DATE,
+            REPETITION,
+            SOURCE)
+            VALUES ('{self.logged_in_user.uuid}',
+            '{task.name}',
+            '{task.start_time}',
+            '{task.end_time}',
+            '{task.description}',
+            {task.date if task.date else 'NULL'},
+            {f"'{task.repetition}'" if task.repetition else 'NULL'},
+            '{task.source}');"""
+        )
         self.conn.commit()
 
     def add_task(self, name: str, start_time: str, end_time: str, date: str | None, description: str, repetition: str | None, source: str) -> None | str:
@@ -162,22 +164,29 @@ class Database:
         task = Task(name=name, start_time=start_time, end_time=end_time, date=date, description=description, repetition=repetition, author=self.logged_in_user, source=source)
         self.__add_task(task)
 
-    def get_tasks(self, author: int) -> tuple[Task]:
-        today = datetime.date.today()
-        weekday = datetime.datetime.now().strftime("%A")[:3]
+    def task_comparator(self, task: Task) -> bool:
+        hour, minutes = map(int,task.start_time.split(":"))
+        return hour * 60 + minutes
+
+    def get_tasks(self, author: int, date: str | None = None) -> tuple[Task]:
+        date = date if date else str(datetime.date.today())
+        year, month, day = map(int, date.split("-"))
+        weekday = datetime.date(year, month, day).strftime("%a")
+
         self.cursor.execute(f"USE {self.APP_NAME};")
-        self.cursor.execute(f"""SELECT * FROM TASKS
-                            WHERE AUTHOR = '{author}'
-                            AND (DATE = '{today}'
-                                OR REPETITION REGEXP '{weekday}'
-                            );"""
-                            )
+        self.cursor.execute(
+            f"""SELECT * FROM TASKS
+            WHERE AUTHOR = '{author}'
+            AND (DATE = '{date}'
+                OR REPETITION REGEXP '{weekday}'
+            );"""
+        )
         tasks = []
         for row in self.cursor.fetchall():
             # print(row)
             task = Task(taskid=row[0], author=row[1], name=row[2], start_time=row[3], end_time=row[4], description=row[5], date=row[6], repetition=row[7], source=row[8])
             tasks.append(task)
-        return tuple(tasks)
+        return sorted(tasks, key=self.task_comparator)
 
     def login(self, username, password) -> User | str:
         self.cursor.execute(f"USE {self.APP_NAME};")
@@ -212,3 +221,6 @@ if __name__ == "__main__":
 
 # TASKS DATABASE
 # SL.NO. | AUTHOR | EVENT_NAME | START_TIME | END_TIME | DESCRIPTION | DAY | SHARED_WITH | REPITION
+
+#TODO:
+# [x] Take date as get_tasks parameter
