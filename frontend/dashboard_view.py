@@ -1,7 +1,7 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
-from frontend.timeline.timeline import TimeLine
+from frontend.timeline_component.timeline import TimeLine
 from frontend.sidebar_component import Sidebar
 from frontend.navbar_component import Navbar
 from frontend.popup_component import TaskDialogue
@@ -42,15 +42,15 @@ class Dashboard(ft.View):
                 icon=ft.icons.ADD,
                 bgcolor="#49a078",
                 foreground_color="#dce1de",
-                on_click=lambda e: page.open(TaskDialogue(page=page, database=database)),
-            )
+                on_click=lambda e: page.open(TaskDialogue(page=page, database=database, task_layer=self.Times.task_layer, rehydrate_task_layer=self.Times.rehydrate_task_layer)),
+            ),
+            ft.TextButton(
+                text="Rehydrate",
+                on_click=lambda e: self.Times.rehydrate_task_layer(),
+                # bgcolor="#49a078",
+                # foreground_color="#dce1de",
+            ),
         ]
-
-    def show_task_dialogue(self) -> None:
-        """This method shows the TaskDialogue popup and updates the page."""
-        task_dialogue = TaskDialogue(page=self.page, database=self.database)
-        self.page.overlay.append(task_dialogue)  # Adding the TaskDialogue to the overlay
-        self.update()
 
 def main(page: ft.Page) -> None:
     page.title = "Locked-In"

@@ -3,6 +3,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 import datetime
 import re
+from frontend.timeline.task_layer import Task_Layer
 from backend.database_connector import Database
 
 class Repeat(ft.Container):
@@ -49,13 +50,15 @@ class Repeat(ft.Container):
         self.selected_days = e.data
 
 class TaskDialogue(ft.AlertDialog):
-    def __init__(self, page: ft.Page, database: Database):
+    def __init__(self, page: ft.Page, database: Database, task_layer: Task_Layer, rehydrate_task_layer: callable = None) -> None:
         # Initialization
         super().__init__()
         self.page: ft.Page = page
         self.conn: Database = database
         self.start_time: str | None = None
         self.end_time: str | None = None
+        self.task_layer = task_layer
+        self.rehydrate_task_layer = rehydrate_task_layer
         self.task_name = ft.TextField(
             label="Task Name",
             hint_text="Enter Task Name",
@@ -91,11 +94,14 @@ class TaskDialogue(ft.AlertDialog):
             value=datetime.date.today(),
             on_change=self.update_selected_date
         )
+
         self.date = ft.TextField(
-            label="",
-            value=str(datetime.date.today()),
+            label="Date",
+            hint_text="Select Date",
+            text_vertical_align=ft.VerticalAlignment.START,
+            value="",
             # width=200,
-            height=40,
+            # height=40,
             suffix=ft.IconButton(
                     icon=ft.icons.CALENDAR_TODAY, #you can also use an image here like samba.png :0
                     icon_color="#dce1de",
@@ -123,7 +129,6 @@ class TaskDialogue(ft.AlertDialog):
                     # self.border = ft.border.all(1, "#ff0000") # Debugging
                     # expand=True
                 ),
-                ft.Text("Select Date:"),
                 self.date,
                 self.repeat,
                 ft.Container(
@@ -203,7 +208,7 @@ class TaskDialogue(ft.AlertDialog):
         self.page.overlay.append(snack_bar)
         snack_bar.open = True
         self.update()
-
+        self.rehydrate_task_layer()
         self.page.close(self)
 
     def task_length(self) -> int:

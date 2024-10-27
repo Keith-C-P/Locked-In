@@ -1,6 +1,6 @@
 import flet as ft
-from frontend.timeline.task_layer import Task_Layer
-from frontend.timeline.time_layer import Time_Layer
+from frontend.timeline_component.task_layer import Task_Layer
+from frontend.timeline_component.time_layer import Time_Layer
 from backend.database_connector import User, Database
 
 class TimeLine(ft.Container):
@@ -23,7 +23,7 @@ class TimeLine(ft.Container):
         super().__init__()
         self.time_division = time_division
         self.min_height = min_height
-        self.task_layer = Task_Layer(database=database)
+        self.task_layer = Task_Layer(min_height=self.min_height, time_division=self.time_division, database=database)
         self.header_height = header_height
 
         # Styling
@@ -40,13 +40,18 @@ class TimeLine(ft.Container):
                 ft.Stack(
                     controls=[
                         Time_Layer(min_height=self.min_height, time_division=self.time_division),
-                        Task_Layer(min_height=self.min_height, time_division=self.time_division, header_height=self.header_height, padding=10, database=database),
+                        self.task_layer,
                     ],
                     clip_behavior=None,
                 ),
             ],
             scroll=ft.ScrollMode.HIDDEN,
         )
+
+    def rehydrate_task_layer(self) -> None:
+        self.task_layer.rehydrate_task_list()
+        self.update()
+        # print("Rehydrated Task Layer from TimeLine")
 
 def main(page : ft.Page) -> None:
     page.title = "Timeline Test"
