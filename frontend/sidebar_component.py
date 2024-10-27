@@ -1,7 +1,7 @@
 import flet as ft
 
 class SidebarButton(ft.TextButton):
-    def __init__(self, text: str, icon: ft.icons, on_click: callable = None) -> None:
+    def __init__(self, text: str, icon: ft.icons, on_click: callable) -> None:
         super().__init__()
         self.icon = icon
         self.text = text
@@ -10,8 +10,7 @@ class SidebarButton(ft.TextButton):
             bgcolor=ft.colors.TRANSPARENT,  # Make background transparent
         )
         self.on_hover = self.hover
-        if on_click is None:
-            self.on_click = on_click
+        self.on_click = on_click  # Assign the click handler
 
     def hover(self, event: ft.ControlEvent) -> None:
         self.bgcolor = "#E7F5C6" if event.data else ft.colors.TRANSPARENT
@@ -19,7 +18,6 @@ class SidebarButton(ft.TextButton):
 
 class Sidebar(ft.Container):
     def __init__(self, page: ft.Page) -> None:
-        # Initialization
         super().__init__()
         self.page = page
 
@@ -39,14 +37,9 @@ class Sidebar(ft.Container):
                     font_family="Helvetica",
                     weight=ft.FontWeight.BOLD,
                 ),
-                ft.Divider(
-                    height=1,
-                    color="#9cc5a1",
-                ),
+                ft.Divider(height=1, color="#9cc5a1"),
                 ft.Container(height=20),
                 SidebarButton("Dashboard", ft.icons.DASHBOARD, on_click=lambda e: self.page.go("/")),
-                # ft.Container(height=10),
-                # SidebarButton("Attendance", ft.icons.CHECK_CIRCLE_OUTLINED, ),
                 ft.Container(height=10),
                 SidebarButton("Mess Menu", ft.icons.FASTFOOD, on_click=lambda e: self.page.go("/mess-menu")),
                 ft.Container(height=10),
