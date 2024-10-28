@@ -7,6 +7,7 @@ def main(page: ft.Page) -> None:
     page.title = "Locked-In"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.bgcolor="#010b13"
     page.theme_mode = 'dark'
     database = Database()
 

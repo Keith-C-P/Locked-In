@@ -143,7 +143,7 @@ class Database:
             '{task.start_time}',
             '{task.end_time}',
             '{task.description}',
-            {task.date if task.date else 'NULL'},
+            {f"'{task.date}'" if task.date else 'NULL'},
             {f"'{task.repetition}'" if task.repetition else 'NULL'},
             '{task.source}');"""
         )
@@ -163,6 +163,14 @@ class Database:
 
         task = Task(name=name, start_time=start_time, end_time=end_time, date=date, description=description, repetition=repetition, author=self.logged_in_user, source=source)
         self.__add_task(task)
+
+    def remove_task(self, task: Task) -> None:
+        self.__remove_task(task)
+
+    def __remove_task(self, task: Task) -> None:
+        self.cursor.execute(f"USE {self.APP_NAME};")
+        self.cursor.execute(f"DELETE FROM TASKS WHERE TASKID = '{task.taskid}';")
+        self.conn.commit()
 
     def task_comparator(self, task: Task) -> bool:
         hour, minutes = map(int,task.start_time.split(":"))

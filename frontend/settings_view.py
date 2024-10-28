@@ -1,6 +1,9 @@
+import os, sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..')) #find another way
 import flet as ft
 from frontend.sidebar_component import Sidebar
 from frontend.navbar_component import Navbar
+from backend.database_connector import Database
 from typing import List
 
 class SettingsOption(ft.Container):
@@ -12,7 +15,7 @@ class SettingsOption(ft.Container):
             color=ft.colors.WHITE,
             weight=ft.FontWeight.BOLD,
         )
-        
+
         self.description_control = ft.Text(
             value=description,
             size=12,
@@ -71,40 +74,36 @@ class SettingsContent(ft.Container):
         return settings_controls
 
 class SettingsPage(ft.Container):
-    def __init__(self, page: ft.Page):
+    def __init__(self, page: ft.Page, database: Database):
+        # Initialization
         super().__init__()
         self.page = page
+        self.conn = database
         self.sidebar = Sidebar(page=page)
-        self.navbar = Navbar(heading="Settings", subheading="Manage your account settings")
+        self.navbar = Navbar(heading="Settings", subheading="Manage your account settings", username=self.conn.logged_in_user.username if self.conn.logged_in_user else None)
 
-        super().__init__(
-            content=ft.Row(
-                controls=[
-                    ft.Container(  # Sidebar Container with rounded corners
-                        content=self.sidebar,
-                        width=280,
-                        height=page.height,  # Ensure full height for sidebar
-                        bgcolor="#32323E",
-                        border_radius=ft.border_radius.only(
-                            top_left=40, bottom_left=40  # Rounded corners on the left
-                        ),
-                        alignment=ft.alignment.top_left,
-                    ),
-                    ft.Container(  # Main content area
-                        content=ft.Column(
-                            controls=[self.navbar, SettingsContent()],
-                            alignment=ft.MainAxisAlignment.START,
-                            spacing=30
-                        ),
-                        expand=True,
-                        padding=20,
-                        bgcolor="#010b13"
-                    ),
-                ],
-                expand=True,
-            )
-        )
+        # Styling
+        self.expand = True
         self.bgcolor = "#010b13"
+        # self.border=ft.border.all(1, "#FF0000") # Debugging
+
+        # Content
+        self.content=ft.Row(
+            controls=[
+                self.sidebar,
+                ft.Container(  # Main content area
+                    content=ft.Column(
+                        controls=[self.navbar, SettingsContent()],
+                        alignment=ft.MainAxisAlignment.START,
+                        spacing=30
+                    ),
+                    expand=True,
+                    padding=20,
+                    bgcolor="#010b13"
+                ),
+            ],
+            expand=True
+        )
 
 def main(page: ft.Page):
     page.title = "Settings Page"
@@ -113,7 +112,7 @@ def main(page: ft.Page):
 
     # Set page size or ensure the sidebar fills the page
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
-    page.vertical_alignment = ft.MainAxisAlignment.STRETCH
+    # page.vertical_alignment = ft.MainAxisAlignment.STRETCH
 
     page.add(SettingsPage(page))
     page.update()

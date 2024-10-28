@@ -72,7 +72,7 @@ class Navbar(ft.Container):
                     ),
                     # border=ft.border.all(1, "#FF0000") # Debugging
                 ),
-                SearchBar(),
+                # SearchBar(),
                 ProfileDropdown(username=username),
             ],
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

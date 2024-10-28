@@ -28,9 +28,10 @@ class TimeLine(ft.Container):
 
         # Styling
         self.expand = True
-        self.bgcolor = "#1E1E1E"
-        self.border_radius = ft.border_radius.all(10)
+        # self.bgcolor = "#1E1E1E"
+        self.bgcolor = "#00000000"
         self.height = height
+        # self.border_radius = ft.border_radius.all(10)
         # self.border = ft.border.all(1, "grey") # Debugging
         self.scroll = ft.ScrollMode.HIDDEN
 
@@ -75,7 +76,7 @@ if __name__ == "__main__":
 
 
 #TODO:
-# [] Rebuild the task list after a task is added
-# [] Sort the tasks by start time
-# [] Give task delete functionality
-# [] Fix positioning of tasks
+# [x] Rebuild the task list after a task is added
+# [x] Sort the tasks by start time
+# [x] Give task delete functionality
+# [x] Fix positioning of tasks

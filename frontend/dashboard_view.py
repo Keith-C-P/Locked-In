@@ -5,7 +5,7 @@ from frontend.timeline_component.timeline import TimeLine
 from frontend.sidebar_component import Sidebar
 from frontend.navbar_component import Navbar
 from frontend.popup_component import TaskDialogue
-from backend.database_connector import Database, Task, User
+from backend.database_connector import Database
 
 class Dashboard(ft.View):
     def __init__(self, page: ft.Page , database: Database):

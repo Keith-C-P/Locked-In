@@ -3,44 +3,57 @@ import random
 from backend.database_connector import Database, Task, User
 
 class TaskCard(ft.Container):
-    def __init__(self, task: Task, height: int):
+    def __init__(self, task: Task, height: int, task_layer):
         super().__init__()
-        self.name = task.name
-        self.start_time = task.start_time
-        self.end_time = task.end_time
-        self.color = task.color
+        self.task: Task = task
+        self.task_layer = task_layer
 
         # Styling
-        self.bgcolor = ft.colors.with_opacity(opacity=0.5, color=self.color)
-        self.border = ft.border.all(width=2, color=ft.colors.with_opacity(opacity=1, color=self.color))
+        self.bgcolor = ft.colors.with_opacity(opacity=0.5, color=self.task.color)
+        self.border = ft.border.all(width=2, color=ft.colors.with_opacity(opacity=1, color=self.task.color))
         self.border_radius = ft.border_radius.all(10)
         self.height = height
-        self.padding = ft.padding.all(0)
+        self.padding = ft.padding.all(5)
         self.margin = ft.margin.all(0)
         self.alignment = ft.alignment.top_left
 
         # Content
-        self.content = ft.Container(
-            ft.Row(
-                controls=[
-                    ft.Text(
-                        value=self.name,
-                        size=20,
+        self.content = ft.Column(
+            controls=[
+                ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Text(
+                                value=self.task.name,
+                                size=20,
+                                height=50,
+                                # bgcolor="red" #Debugging
+                            ),
+                            ft.IconButton(
+                                icon="delete",
+                                on_click=lambda e: self.on_delete(),
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.START,
+                    ),
+                ),
+                ft.Container(
+                    content=ft.Text(
+                        value=self.task.description,
+                        size=15,
                         height=50,
                         # bgcolor="red" #Debugging
                     ),
-                    ft.IconButton(
-                        icon="delete",
-                        # on_click=self.on_delete,
-                    ),
-                ],
-                vertical_alignment=ft.CrossAxisAlignment.START,
-                alignment=ft.CrossAxisAlignment.START,
-            ),
+                ),
+            ]
             # border=ft.border.all(1, "red"), # Debugging
         )
 
     def on_delete(self):
+        print("Deleting Task")
+        self.task_layer.conn.remove_task(self.task)
+        self.task_layer.rehydrate_task_list()
         pass
 
 class Task_Layer(ft.Container):
@@ -93,10 +106,6 @@ class Task_Layer(ft.Container):
                     expand=True,
                     # scroll=ft.ScrollMode.HIDDEN,70
                 ),
-                ft.Container(
-                    height=self.height,
-                    width=20,
-                ),
             ],
             alignment=ft.CrossAxisAlignment.START,
             spacing=0,
@@ -109,29 +118,8 @@ class Task_Layer(ft.Container):
         Add a task to the task list
         """
         self.task_cards = self.__task_builder()
-        self.content = ft.Row(
-            controls=[
-                ft.Container(
-                    height=self.height,
-                    width=70,
-                ),
-                ft.Column(
-                    controls=self.task_cards,
-                    alignment=ft.CrossAxisAlignment.START,
-                    spacing=0,
-                    expand=True,
-                    # scroll=ft.ScrollMode.HIDDEN,70
-                ),
-                ft.Container(
-                    height=self.height,
-                    width=20,
-                ),
-            ],
-            alignment=ft.CrossAxisAlignment.START,
-            spacing=0,
-            # width=self.width,
-            height=self.total_height,
-        )
+        self.content.controls[1].controls = self.task_cards
+        self.update()
         # print("Rehydrated from Task Layer")
 
     def __task_builder(self) -> list[TaskCard] | None:
@@ -170,6 +158,7 @@ class Task_Layer(ft.Container):
                 TaskCard(
                     task=current_task,
                     height=task_length * height_of_minute,
+                    task_layer=self
                 )
             )
 
@@ -207,4 +196,4 @@ if __name__ == "__main__":
     ft.app(target=main)
 
 #TODO:
-# [] Add the delete functionality to the TaskCard
+# [x] Add the delete functionality to the TaskCard

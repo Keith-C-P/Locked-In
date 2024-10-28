@@ -204,8 +204,6 @@ class TaskDialogue(ft.AlertDialog):
         snack_bar = ft.SnackBar(
             content=ft.Text("Task Created!")
         )
-        self.page.overlay.append(snack_bar)
-        snack_bar.open = True
         self.update()
         self.rehydrate_task_layer()
         self.page.close(self)
